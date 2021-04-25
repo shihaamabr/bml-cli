@@ -9,11 +9,20 @@ source .env 2> /dev/null
 
 if [ "$BML_USERNAME" = "" ]
 then
-	echo "${red}Credentials not found in .env file${reset}"
+	echo ${red}Credentials not found in .env file${reset}
 	echo ""
 	read -p 'Username: ' BML_USERNAME
 	read -s -p 'Password: ' BML_PASSWORD
 	echo ""
+	read -p 'Do you want to save login? [Y/N] ' SAVE_LOGIN
+
+	if [ "$SAVE_LOGIN" = "Y" ]
+	then
+		echo BML_USERNAME=$BML_USERNAME > .env
+		echo BML_PASSWORD=$BML_PASSWORD >> .env
+	else
+		:
+	fi
 	echo ""
 else
 	:
