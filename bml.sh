@@ -1,18 +1,20 @@
 #!/bin/bash
-
-source .env >> /dev/null
-
 BML_URL='https://www.bankofmaldives.com.mv/internetbanking/api'
 COOKIE=/tmp/bmlcookie
 red=`tput setaf 1`
 green=`tput setaf 2`
 reset=`tput sgr0`
 
+source .env 2> /dev/null
 
 if [ "$BML_USERNAME" = "" ]
 then
+	echo "${red}Credentials not found in .env file${reset}"
+	echo ""
 	read -p 'Username: ' BML_USERNAME
 	read -s -p 'Password: ' BML_PASSWORD
+	echo ""
+	echo ""
 else
 	:
 fi
