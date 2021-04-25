@@ -6,3 +6,6 @@
 
 - Requiments 
 `curl` `jq`
+
+### known bugs
+- colored texts do not work in termux
