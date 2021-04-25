@@ -1,6 +1,6 @@
 # Bank of Maldives CLI written in bash
 
-## under dev
+## under dev, lots of things are broken.
 
 ### can you pr ascii art lmao 
 
