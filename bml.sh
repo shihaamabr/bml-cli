@@ -1,12 +1,16 @@
 #!/bin/bash
 BML_URL='https://www.bankofmaldives.com.mv/internetbanking/api'
 COOKIE=/tmp/bmlcookie
+
+#Setting terminal output colors
 red=`tput setaf 1`
 green=`tput setaf 2`
 reset=`tput sgr0`
 
+#importing saved credentials
 source .env 2> /dev/null
 
+#what to do if credentials not saved
 if [ "$BML_USERNAME" = "" ]
 then
 	echo ${red}Credentials not found in .env file${reset}
@@ -28,28 +32,32 @@ else
 	:
 fi
 
-
+#login and generate cookie
 LOGIN=$(curl -s -c $COOKIE $BML_URL/login \
 	--data-raw username=$BML_USERNAME \
 	--data-raw password=${BML_PASSWORD} \
 	--compressed \
 		| jq -r .success)
-
+#check if login was success
 if [ "$LOGIN" = "true" ]
         then
+		#Requesting for User profile after login and regex to grap the Full name
                 NAME=$(curl -s -b $COOKIE $BML_URL/profile \
 			| awk -F 'fullname":"' '{print $2}' \
 			| cut -f1 -d '"')
+		#display a Welcome message with fullname
 		echo ""
 		echo ${green}Welcome ${reset}$NAME
 #		curl -s -b $COOKIE $BML_URL/userinfo
 		echo ""
 else
+		#Display error if login was not succuessfull and delete cookie
                 echo "${red}An error occured, Please check Username and Password" 1>&2
                 rm $COOKIE 2> /dev/null
                 exit
 fi
 
+#display menu
 echo "Menu"
 echo ""
 echo "1 - Accounts"
@@ -88,6 +96,7 @@ elif [ "$MENU" = "2" ]
 					if [ "$VALID_NUMBER" = "true" ]
 						then
 							printf 'Name: '
+							curl -s -b $COOKIE $BML_URL/validate/account/$ACCOUNT_NUMBER | jq -r .
 							read -r ACCOUNT_NAME
 							curl -s -b $COOKIE $BML_URL | jq
 					else

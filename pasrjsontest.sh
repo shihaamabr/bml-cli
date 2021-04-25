@@ -14,3 +14,5 @@ curl -s -b $COOKIE $BML_URL/contacts | jq -r '["Account Number","Currency","Acco
 
 #get this to render nicely in a table, similar to contacts
 #curl -s -b $COOKIE $BML_URL/dashboard
+
+curl -s -b $COOKIE $BML_URL/api/validate/account/7730000359348
