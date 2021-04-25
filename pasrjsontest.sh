@@ -11,4 +11,7 @@ curl -s -c $COOKIE $BML_URL/login \
 curl -s -b $COOKIE $BML_URL/profile > /dev/null
 #curl -s -b $COOKIE $BML_URL/contacts | jq -r '["Account Number","Currency","Account Name","Contact Name"], (.["payload"] | .[] | [.account, .currency, .name, .alias]) | @tsv' contacts.json
 #curl -s -b $COOKIE $BML_URL/validate/account/7704265806101
+
+
+#get this to render nicely in a table, similar to contacts
 curl -s -b $COOKIE $BML_URL/dashboard
