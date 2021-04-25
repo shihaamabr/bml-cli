@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source .env
+source .env >> /dev/null
 
 BML_URL='https://www.bankofmaldives.com.mv/internetbanking/api'
 COOKIE=/tmp/bmlcookie
@@ -8,13 +8,15 @@ red=`tput setaf 1`
 green=`tput setaf 2`
 reset=`tput sgr0`
 
-#printf 'Username: '
-#read -r BML_USERNAME
-#printf 'Password: '
-#read -sp BML_PASSWORD
 
-#read -p 'Username: ' BML_USERNAME
-#read -s -p 'Password: ' BML_PASSWORD
+if [ "$BML_USERNAME" = "" ]
+then
+	read -p 'Username: ' BML_USERNAME
+	read -s -p 'Password: ' BML_PASSWORD
+else
+	:
+fi
+
 
 LOGIN=$(curl -s -c $COOKIE $BML_URL/login \
 	--data-raw username=$BML_USERNAME \
