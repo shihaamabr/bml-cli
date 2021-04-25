@@ -11,4 +11,4 @@ curl -s -c $COOKIE $BML_URL/login \
 curl -s -b $COOKIE $BML_URL/profile > /dev/null
 #curl -s -b $COOKIE $BML_URL/contacts
 #curl -s -b $COOKIE $BML_URL/validate/account/7704265806101
-curl -s -b $COOKIE $BML_URL/dashboard 
+curl -s -b $COOKIE $BML_URL/dashboard
