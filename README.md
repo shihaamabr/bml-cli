@@ -5,8 +5,8 @@
 ### can you pr ascii art lmao 
 
 - Requiments 
-`curl` `jq`
-Make sure you have both of them installed
+`curl` `jq` \
+Make sure you have both of them installed \
 `sudo apt install curl jq` on Ubuntu
 ### known bugs
 - colored texts do not work in termux
