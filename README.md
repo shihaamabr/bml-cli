@@ -12,7 +12,7 @@ Make sure you have both of them installed \
 - colored texts do not work in termux
 
 
-### Installation
+### Use from source - Recommended
 ```
 git clone https://github.com/shihaamabr/bmlcli
 
@@ -22,5 +22,8 @@ chmod +x bml.sh
 ./bml.sh
 
 ```
+### Installation - NOT Recommended (for now)
+`curl -sL "https://raw.githubusercontent.com/shihaamabr/bmlcli/main/bml.sh" | sudo tee /usr/bin/bml-cli >/dev/null && sudo chmod 755 /usr/bin/bml-cli`
+
 - Do NOT save password if password contain one of the following characters
 ` | ^ $ & ; : ( )`
