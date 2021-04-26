@@ -1,0 +1,1 @@
+curl -sL "https://raw.githubusercontent.com/shihaamabr/bmlcli/main/bml.sh" | sudo tee /usr/bin/bml-cli >/dev/null && sudo chmod 755 /usr/bin/bml-cli

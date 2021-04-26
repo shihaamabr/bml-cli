@@ -1,26 +1,19 @@
 # Bank of Maldives CLI written in bash
 
-## under dev, lots of things are broken.
+Under development, lots of things are broken. If possible, pr ascii art lmao.
 
-### can you pr ascii art lmao 
-
-- Requiments 
+## Requirements 
 `curl` `jq`
 
-### known bugs
+## known bugs
 - colored texts do not work in termux
 
-
-### Installation
+## Installation
 ```
 git clone https://github.com/shihaamabr/bmlcli
 
 cd bmlcli/
 
-echo "BML_USERNAME=xxxxxxxxx" > .env
-echo "BML_PASSWORD=yyyyyyyyyy" >> .env
-
 chmod +x bml.sh
 ./bml.sh
-
 ```

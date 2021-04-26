@@ -51,8 +51,8 @@ if [ "$LOGIN" = "true" ]
 #		curl -s -b $COOKIE $BML_URL/userinfo
 		echo ""
 else
-		#Display error if login was not succuessfull and delete cookie
-                echo "${red}An error occured, Please check Username and Password" 1>&2
+		#Display error if login was not successful and delete cookie
+                echo "${red}An error occurred, Please check Username and Password" 1>&2
                 rm $COOKIE 2> /dev/null
                 exit
 fi
@@ -79,7 +79,7 @@ elif [ "$MENU" = "2" ]
 		echo ""
 		echo "1 - Transfer"
 		echo "2 - Add Contact"
-		echo "3 - Delete Conact"
+		echo "3 - Delete Contact"
 		echo ""
 		printf 'Please Input: '
 		read -r CONTACS
