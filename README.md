@@ -1,18 +1,26 @@
-# Bank of Maldives CLI written in bash
+# Bank of Maldives CLI
+BML CLI written in Bash. This project is currently under development and a lot of things are broken.
 
-## under dev, lots of things are broken.
+## Requiments 
+`curl` `jq`
 
-### can you pr ascii art lmao 
+### Ubuntu
+`sudo apt install curl jq`
 
-- Requiments 
-`curl` `jq` \
-Make sure you have both of them installed \
-`sudo apt install curl jq` on Ubuntu
-### known bugs
-- colored texts do not work in termux
+### Fedora
+`sudo dnf  install curl jq`
 
+### Arch
+`sudo pacman -S curl jq`
 
-### Use from source - Recommended
+## Bugs
+- Colored texts do not work in Termux
+- Do **NOT** save passwords that contain one of the following characters
+` | ^ $ & ; : ( )`
+
+## Installation
+
+### Recommended
 ```
 git clone https://github.com/shihaamabr/bmlcli
 
@@ -20,10 +28,10 @@ cd bmlcli/
 
 chmod +x bml.sh
 ./bml.sh
-
 ```
-### Installation - NOT Recommended (for now)
-`curl -sL "https://raw.githubusercontent.com/shihaamabr/bmlcli/main/bml.sh" | sudo tee /usr/bin/bml-cli >/dev/null && sudo chmod 755 /usr/bin/bml-cli`
 
-- Do NOT save password if password contain one of the following characters
-` | ^ $ & ; : ( )`
+### Not Recommended
+```
+chmod +x install.sh
+./install.sh
+```
