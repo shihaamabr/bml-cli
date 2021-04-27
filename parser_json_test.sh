@@ -10,9 +10,9 @@ curl -s -c $COOKIE $BML_URL/login \
 	--compressed > /dev/null
 curl -s -b $COOKIE $BML_URL/profile > /dev/null
 
-curl -s -b $COOKIE $BML_URL/contacts | jq -r '["Account Number","Currency","Account Name","Contact Name"], ["==================================================================="], (.["payload"] | .[] | [.account, .currency, .name, .alias]) | @tsv'
+#curl -s -b $COOKIE $BML_URL/contacts | jq -r '["Account Number","Currency","Account Name","Contact Name"], ["==================================================================="], (.["payload"] | .[] | [.account, .currency, .name, .alias]) | @tsv'
 
 #get this to render nicely in a table, similar to contacts
 #curl -s -b $COOKIE $BML_URL/dashboard
 
-curl -s -b $COOKIE $BML_URL/api/validate/account/7730000359348
+curl -s -b $COOKIE $BML_URL/api/validate/account/7701134192101

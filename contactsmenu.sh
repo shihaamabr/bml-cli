@@ -12,10 +12,10 @@ read -r CONTATCS
 
 if [ "$CONTATCS" = "1" ]
 	then
-	source listcontact.sh
+	source listcontacts.sh
 elif [ "$CONTATCS" = "2" ]
 	then
-	source addcontact.sh
+	source addcontact-menu.sh
 elif [ "$CONTATCS" = "3" ]
 	then
 	source delete contact.sh
@@ -25,9 +25,10 @@ elif [ "$CONTATCS" = "4" ]
 elif [ "$CONTATCS" = "5" ]
 	then
 	rm $COOKIE
+	echo "Cleaning up.."
 	exit
 else
-	echo "${red}There was an error${reset}" 1>&2
 	clear
+	echo "${red}There was an error${reset}" 1>&2
 	source contactsmenu.sh
 fi
