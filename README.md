@@ -22,9 +22,9 @@ BML CLI written in Bash. This project is currently under development and a lot o
 
 ### Recommended
 ```
-git clone https://github.com/shihaamabr/bmlcli
+git clone https://github.com/shihaamabr/bml-cli
 
-cd bmlcli/
+cd bml-cli
 
 chmod +x bml.sh
 ./bml.sh
