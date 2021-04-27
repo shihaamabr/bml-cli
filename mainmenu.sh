@@ -1,4 +1,4 @@
-echo "Menu"
+echo "Main Menu"
 echo ""
 echo "1 - Accounts"
 echo "2 - Transfer"
