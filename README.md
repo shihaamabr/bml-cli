@@ -22,7 +22,7 @@ BML CLI written in Bash. This project is currently under development and a lot o
 
 # Installation
 
-## Recommended
+### Recommended
 ```
 git clone https://github.com/shihaamabr/bml-cli
 
@@ -32,7 +32,7 @@ chmod +x bml.sh
 ./bml.sh
 ```
 
-## Not Recommended
+### Not Recommended
 ```
 chmod +x install.sh
 ./install.sh
