@@ -15,7 +15,7 @@ BML CLI written in Bash. This project is currently under development and a lot o
 ### Arch
 `sudo pacman -S curl jq`
 
-## Bugs
+# Bugs
 - Colored texts do not work in Termux
 - Do **NOT** save passwords that contain one of the following characters
 ` | ^ $ & ; : ( )`
