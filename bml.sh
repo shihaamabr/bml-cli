@@ -4,8 +4,11 @@
 
 #Setting intial variables
 BML_URL='https://www.bankofmaldives.com.mv/internetbanking/api'
-COOKIE=/tmp/bmlcookie
-CREDENTIALS=.env
+mkdir -p ~/.config/bml-cli/
+mkdir -p ~/.cache/bml-cli/
+
+COOKIE=~/.cache/bml-cli/cookie
+CREDENTIALS=~/.config/bml-cli/.env
 
 #Setting terminal output colors
 red=`tput setaf 1`
