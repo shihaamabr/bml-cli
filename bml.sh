@@ -8,8 +8,9 @@ COOKIE=/tmp/bmlcookie
 CREDENTIALS=.env
 
 #Setting terminal output colors
-red="\033[0;32m"
-green="\033[0;31m"
-reset="\033[0m"
+red=`tput setaf 1`
+green=`tput setaf 2`
+reset=`tput sgr0`
+
 
 source readpass.sh
