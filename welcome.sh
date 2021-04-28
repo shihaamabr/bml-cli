@@ -24,9 +24,9 @@ echo "╚═════╝░╚═╝░░░░░╚═╝╚════�
 echo "${reset}"
 echo ${green}Welcome ${reset}$NAME
 echo ""
-echo Phone: $PHONE
-echo Email: $EMAIL
-echo Birthday: $DOB
-echo ID Card: $IDCARD
+echo ${cyan}Phone${reset}: $PHONE
+echo ${cyan}Email${reset}: $EMAIL
+echo ${cyan}Birthday${reset}: $DOB
+echo ${cyan}ID Card${reset}: $IDCARD
 echo ""
 source mainmenu.sh
