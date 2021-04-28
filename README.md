@@ -32,8 +32,4 @@ chmod +x bml.sh
 ./bml.sh
 ```
 
-### Not Recommended
-```
-chmod +x install.sh
-./install.sh
-```
+
