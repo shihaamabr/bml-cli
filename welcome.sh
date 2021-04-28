@@ -14,14 +14,14 @@ IDCARD=$(curl -s -b $COOKIE $BML_URL/userinfo \
         | jq -r '.["payload"] | .["user"] | .idcard')
 
 #display a Welcome message with fullname
-echo ""
+echo "${red}"
 echo "██████╗░███╗░░░███╗██╗░░░░░  ░█████╗░██╗░░░░░██╗"
 echo "██╔══██╗████╗░████║██║░░░░░  ██╔══██╗██║░░░░░██║"
 echo "██████╦╝██╔████╔██║██║░░░░░  ██║░░╚═╝██║░░░░░██║"
 echo "██╔══██╗██║╚██╔╝██║██║░░░░░  ██║░░██╗██║░░░░░██║"
 echo "██████╦╝██║░╚═╝░██║███████╗  ╚█████╔╝███████╗██║"
 echo "╚═════╝░╚═╝░░░░░╚═╝╚══════╝  ░╚════╝░╚══════╝╚═╝"
-echo ""
+echo "${reset}"
 echo ${green}Welcome ${reset}$NAME
 echo ""
 echo Phone: $PHONE
