@@ -6,13 +6,13 @@ BML CLI written in Bash. This project is currently under development and a lot o
 ## Requirements 
 `curl` `jq`
 
-### Ubuntu
+**Ubuntu**
 `sudo apt install curl jq`
 
-### Fedora
+**Fedora**
 `sudo dnf  install curl jq`
 
-### Arch
+**Arch**
 `sudo pacman -S curl jq`
 
 ## Bugs
@@ -22,7 +22,7 @@ BML CLI written in Bash. This project is currently under development and a lot o
 
 ## Installation
 
-### Recommended
+**Recommended**
 ```
 git clone https://github.com/shihaamabr/bml-cli
 
@@ -32,7 +32,8 @@ chmod +x bml.sh
 ./bml.sh
 ```
 
-### Not Recommended
+**Not Recommended**
+
 ```
 chmod +x install.sh
 ./install.sh
