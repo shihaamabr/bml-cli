@@ -7,11 +7,13 @@ then
 		read -p 'Do you want to save login? [y/N] ' SAVE_LOGIN
 		if [ "$SAVE_LOGIN" = "Y" ]
 		then
+			echo "Username and Password is saved in ${lightred}PAIN TEXT${reset} in $CREDENTIALS"
 			echo "BML_USERNAME='${BML_USERNAME}'" > $CREDENTIALS
 			echo "BML_PASSWORD='${BML_PASSWORD}'" >> $CREDENTIALS
 
 		elif [ "$SAVE_LOGIN" = "y" ]
 		then
+			echo "Username and Password is saved in ${lightred}PAIN TEXT${reset} in $CREDENTIALS"
 			echo "BML_USERNAME='${BML_USERNAME}'" > $CREDENTIALS
 			echo "BML_PASSWORD='${BML_PASSWORD}'" >> $CREDENTIALS
 		else

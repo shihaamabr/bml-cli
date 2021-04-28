@@ -1,12 +1,11 @@
 #!/bin/bash
 
-
-
-#Setting intial variables
-BML_URL='https://www.bankofmaldives.com.mv/internetbanking/api'
+#Making cookie and credentials dir
 mkdir -p ~/.config/bml-cli/
 mkdir -p ~/.cache/bml-cli/
 
+#Setting intial variables
+BML_URL='https://www.bankofmaldives.com.mv/internetbanking/api'
 COOKIE=~/.cache/bml-cli/cookie
 CREDENTIALS=~/.config/bml-cli/.env
 
