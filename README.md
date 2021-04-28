@@ -6,6 +6,7 @@ BML CLI written in Bash. This project is currently under development and a lot o
 ## Requirements
 `curl` `jq`
 - Make sure all requirements are met before running script.
+- Termux users will need `ncurses-utils` additionally for terminal colors
 
 #### Arch Linux
 `sudo pacman -S curl jq`
@@ -16,8 +17,11 @@ BML CLI written in Bash. This project is currently under development and a lot o
 #### Fedora
 `sudo dnf  install curl jq`
 
+### Termux
+`pkg install curl jq ncurses-utils`
+
 ## Bugs
-- Colored texts do not work in Termux
+- :)
 
 ## Installation
 ```
