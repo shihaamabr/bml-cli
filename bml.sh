@@ -27,8 +27,8 @@ reset=`tput sgr0`
 OS=$(uname -r | grep -oE microsoft)
 if [ "$OS" = "microsoft" ]
 then
-	echo "${red}WSL Not Supported!${reset}"
-	exit
+	#echo "${red}WSL Not Supported!${reset}"
+	#exit
 else
 	:
 fi
