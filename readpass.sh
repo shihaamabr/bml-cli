@@ -3,7 +3,7 @@ then
 	source $CREDENTIALS
 	if [ "$LOGIN" = "2" ]
 	then
-		echo "${red}Password update required${reset}"
+		echo "${red}Login Required${reset}"
 		rm $CREDENTIALS 2> /dev/null
 		read -p 'Username: ' BML_USERNAME
 		read -s -p 'Password: ' BML_PASSWORD
@@ -13,7 +13,7 @@ then
 	fi
 elif [ ! -f $CREDENTIALS ]
 then
-	echo "${red}Username or Password in correct${reset}"
+	echo "${red}Login Required${reset}"
 	read -p 'Username: ' BML_USERNAME
 	read -s -p 'Password: ' BML_PASSWORD
 	echo ""

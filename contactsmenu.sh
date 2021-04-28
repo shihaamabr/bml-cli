@@ -12,19 +12,13 @@ read -r CONTATCS
 
 if [ "$CONTATCS" = "1" ]
 	then
-        echo "WIP" 
-        sleep 2
-        source conactsmenu.sh
 	source listcontacts.sh
 elif [ "$CONTATCS" = "2" ]
 	then
 	source addcontact-menu.sh
 elif [ "$CONTATCS" = "3" ]
 	then
-        echo "WIP"
-        sleep 2
-        source conactsmenu.sh
-	source delete contact.sh
+	source deletecontact.sh
 elif [ "$CONTATCS" = "4" ]
 	then
 	source mainmenu.sh
