@@ -13,21 +13,36 @@ read -r MENU
 
 if [ "$MENU" = "1" ]
         then
-	source accounts.sh 
+	echo "WIP"
+	sleep 2
+	source mainmenu.sh
+	#source accounts.sh 
 elif [ "$MENU" = "2" ]
         then
-	source transfer.sh
+	echo "WIP" 
+        sleep 2
+        source mainmenu.sh
+	#source transfer.sh
 elif [ "$MENU" = "3" ]
         then
 	source contactsmenu.sh
 elif [ "$MENU" = "4" ]
         then
+	echo "WIP"
+        sleep 2
+        source mainmenu.sh
 	source activities.sh
 elif [ "$MENU" = "5" ]
         then
+        echo "WIP"
+        sleep 2
+        source mainmenu.sh
 	source services.sh
 elif [ "$MENU" = "6" ]
 	then
+        echo "WIP"
+        sleep 2
+       	source mainmenu.sh
 	source settingsmenu.sh
 elif [ "$MENU" = "7" ]
 	then
@@ -35,6 +50,6 @@ elif [ "$MENU" = "7" ]
 	exit
 else
         echo "${red}There was an error${reset}" 1>&2
-	clear
+
 	source mainmenu.sh
 fi
