@@ -2,39 +2,38 @@
 BML CLI written in Bash. This project is currently under development and a lot of things are broken.
 
 ![photo_2021-04-28_14-59-35](https://user-images.githubusercontent.com/18140039/116385581-5c948300-a832-11eb-899b-9133501a4ae7.jpg)
-    
-## Requirements 
-    `curl` `jq`
 
-#### Ubuntu
-    `sudo apt install curl jq`
+# Requirements 
+`curl` `jq`
 
-#### Fedora
-    `sudo dnf  install curl jq`
+### Ubuntu
+`sudo apt install curl jq`
 
-#### Arch
-    `sudo pacman -S curl jq`
+### Fedora
+`sudo dnf  install curl jq`
 
-## Bugs
-    - Colored texts do not work in Termux
-    - Do **NOT** save passwords that contain one of the following characters
-    ` | ^ $ & ; : ( )`
+### Arch
+`sudo pacman -S curl jq`
 
-## Installation
+# Bugs
+- Colored texts do not work in Termux
+- Do **NOT** save passwords that contain one of the following characters
+` | ^ $ & ; : ( )`
 
-**Recommended**
-    ```
-    git clone https://github.com/shihaamabr/bml-cli
-    
-    cd bml-cli
-    
-    chmod +x bml.sh
-    ./bml.sh
-    ```
+# Installation
 
-**Not Recommended**
-    
-    ```
-    chmod +x install.sh
-    ./install.sh
-    ```
+### Recommended
+```
+git clone https://github.com/shihaamabr/bml-cli
+
+cd bml-cli
+
+chmod +x bml.sh
+./bml.sh
+```
+
+### Not Recommended
+```
+chmod +x install.sh
+./install.sh
+```
