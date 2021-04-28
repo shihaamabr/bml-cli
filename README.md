@@ -1,8 +1,7 @@
 # Bank of Maldives CLI
 BML CLI written in Bash. This project is currently under development and a lot of things are broken.
 
-![photo_2021-04-28_14-36-47](https://user-images.githubusercontent.com/18140039/116382279-2dc8dd80-a82f-11eb-97ea-a864016cc032.jpg)
-
+![photo_2021-04-28_14-59-35](https://user-images.githubusercontent.com/18140039/116385581-5c948300-a832-11eb-899b-9133501a4ae7.jpg)
 
 ## Requiments 
 `curl` `jq`
