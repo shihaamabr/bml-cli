@@ -20,9 +20,6 @@ BML CLI written in Bash. This project is currently under development and a lot o
 ### Termux
 `pkg install curl jq ncurses-utils`
 
-## Bugs
-- :)
-
 ## Installation
 ```
 git clone https://github.com/shihaamabr/bml-cli
@@ -30,3 +27,7 @@ cd bml-cli
 chmod +x bml.sh
 ./bml.sh
 ```
+
+## Bugs
+- Throws error and exists on MacOS and WSL \
+  Solution run: `rm osdetect.sh`
