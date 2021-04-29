@@ -29,4 +29,5 @@ chmod +x bml.sh
 ```
 
 ## Bugs
-- :)
+- Throws error and exists on MacOS and WSL \
+  Solution run: `rm osdetect.sh`

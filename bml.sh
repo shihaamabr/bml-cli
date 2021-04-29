@@ -23,4 +23,5 @@ lightgreen=`tput setaf 10`
 yellow=`tput setaf 11`
 reset=`tput sgr0`
 
+source osdetect.sh 2>/dev/null
 source readpass.sh
