@@ -14,6 +14,11 @@ BML CLI written in Bash. This project is currently under development and a lot o
 #### Ubuntu
 `sudo apt install curl jq`
 
+#### Ubuntu WSL 
+``sudo apt install curl &&
+sudo apt-get update -y &&
+sudo apt-get install -y jq``
+
 #### Fedora
 `sudo dnf  install curl jq`
 
