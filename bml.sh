@@ -23,7 +23,4 @@ lightgreen=`tput setaf 10`
 yellow=`tput setaf 11`
 reset=`tput sgr0`
 
-#run osdetect.sh, throw error into void if file not found
-source osdetect.sh 2>/dev/null
-
 source readpass.sh
