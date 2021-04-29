@@ -23,16 +23,7 @@ lightgreen=`tput setaf 10`
 yellow=`tput setaf 11`
 reset=`tput sgr0`
 
-
-OS=$(uname -r | grep -oE microsoft)
-if [ "$OS" = "microsoft" ]
-then
-	echo "${red}WSL Not Supported!${reset}"
-	exit
-else
-	:
-fi
-
-
+#run osdetect.sh, throw error into void if file not found
+source osdetect.sh 2>/dev/null
 
 source readpass.sh
