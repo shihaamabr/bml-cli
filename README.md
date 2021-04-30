@@ -18,7 +18,7 @@ BML CLI written in Bash. This project is currently under development and a lot o
 `sudo dnf  install curl jq openssl`
 
 ### Termux
-`pkg install curl jq openssl ncurses-utils`
+`pkg install curl jq openssl-tools ncurses-utils`
 
 ## Installation
 ```
