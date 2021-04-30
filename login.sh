@@ -17,9 +17,12 @@ elif [ "$LOGIN" = "20" ]
 		echo ""
 		if [ "$MAC" = "true" ]
 		then
-		open https://www.bankofmaldives.com.mv/internetbanking/forgot_password
+			open https://www.bankofmaldives.com.mv/internetbanking/forgot_password
+		elif [ "$WSL" = "true" ]
+		then
+			cmd.exe /C START https://www.bankofmaldives.com.mv/internetbanking/forgot_password
 		else
-		xdg-open https://www.bankofmaldives.com.mv/internetbanking/forgot_password
+			xdg-open https://www.bankofmaldives.com.mv/internetbanking/forgot_password
 		fi
 		source readpass.sh
 elif [ "$LOGIN" = "2" ]
