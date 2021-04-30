@@ -7,9 +7,9 @@ if [ "uname -r | grep -oE microsoft" = "microsoft" ]
                 #exit
 elif [ "uname -a | grep -oE Darwin | tail -n1" = "Darwin" ]
         then
+		MAC=true
                 #echo "${red}MacOS Not Supported!${reset}" 1>&2
                 #exit
-		MAC=true
 else
                 :
 fi
