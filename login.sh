@@ -17,12 +17,15 @@ elif [ "$LOGIN" = "20" ]
 		echo ""
 		if [ "$MAC" = "true" ]
 		then
-			open https://www.bankofmaldives.com.mv/internetbanking/forgot_password
+			open $BML_RESETPASS
 		elif [ "$WSL" = "true" ]
 		then
-			cmd.exe /C START https://www.bankofmaldives.com.mv/internetbanking/forgot_password
+			cmd.exe /C START $BML_RESETPASS
+		elif [ "$ANDROID" = "true" ]
+		then
+			am start -a android.intent.action.VIEW -d $BML_RESETPASS
 		else
-			xdg-open https://www.bankofmaldives.com.mv/internetbanking/forgot_password
+			xdg-open $BML_RESETPASS
 		fi
 		source readpass.sh
 elif [ "$LOGIN" = "2" ]
@@ -32,5 +35,4 @@ else
 		echo "${red}Unknown Error${reset}" 1>&2
 		exit
 fi
-
 
