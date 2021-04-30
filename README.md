@@ -20,6 +20,9 @@ BML CLI written in Bash. This project is currently under development and a lot o
 ### Termux
 `pkg install curl jq openssl-tools ncurses-utils`
 
+### OpenSUSE
+`sudo zypper install curl jq openssl`
+
 ## Installation
 ```
 git clone https://github.com/shihaamabr/bml-cli
