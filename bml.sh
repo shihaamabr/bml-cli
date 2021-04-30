@@ -10,7 +10,7 @@ COOKIE=~/.cache/bml-cli/cookie
 CREDENTIALS=~/.config/bml-cli/.env
 
 #Setting terminal output colors
-red=`tput setaf 1
+red=`tput setaf 1`
 #errorred=`tput setaf 196`
 #validgreen=`tput setaf 82`
 green=`tput setaf 46`
