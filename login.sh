@@ -13,7 +13,15 @@ if [ "$LOGIN" = "0" ]
 elif [ "$LOGIN" = "20" ]
 	then
 		echo "${red}Account Locked!${reset}"
-		exit
+		echo "${lightred}Please reset password and login again.${reset}"
+		echo ""
+		if [ "$MAC" = "true" ]
+		then
+		open https://www.bankofmaldives.com.mv/internetbanking/forgot_password
+		else
+		xdg-open https://www.bankofmaldives.com.mv/internetbanking/forgot_password
+		fi
+		source readpass.sh
 elif [ "$LOGIN" = "2" ]
 	then
 		source readpass.sh
