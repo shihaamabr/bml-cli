@@ -6,6 +6,7 @@ mkdir -p ~/.cache/bml-cli/
 
 #Setting intial variables
 BML_URL='https://www.bankofmaldives.com.mv/internetbanking/api'
+BML_RESETPASS='https://www.bankofmaldives.com.mv/internetbanking/forgot_password'
 COOKIE=~/.cache/bml-cli/cookie
 CREDENTIALS=~/.config/bml-cli/.env
 
