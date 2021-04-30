@@ -1,6 +1,7 @@
 if [ -f $CREDENTIALS ]
 then
 	source $CREDENTIALS
+	echo "Attempting to login with saved credentials"
 	if [ "$LOGIN" = "2" ]
 	then
 		echo "${red}Login Required${reset}"
