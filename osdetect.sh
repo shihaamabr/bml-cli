@@ -10,6 +10,9 @@ elif [ "uname -a | grep -oE Darwin | tail -n1" = "Darwin" ]
 		MAC=true
                 #echo "${red}MacOS Not Supported!${reset}" 1>&2
                 #exit
+elif [ "uname -a | grep -oE Android" = "Android" ]
+	then
+		ANDROID=true
 else
                 :
 fi
