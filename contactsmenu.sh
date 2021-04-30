@@ -3,32 +3,40 @@ echo "Contacts"
 echo ""
 echo "1 - List Contacts"
 echo "2 - Add Contact"
-echo "3 - Delete Conact"
+echo "3 - Delete Contact"
 echo "4 - Go back"
-echo "5 - Exit"
 echo ""
 printf 'Please Input: '
-read -r CONTATCS
+read -r CONTACTS
 
-if [ "$CONTATCS" = "1" ]
-	then
+if [ "$CONTACTS" = "1" ]
+then
 	source listcontacts.sh
-elif [ "$CONTATCS" = "2" ]
-	then
+elif [ "$CONTACTS" = "2" ]
+then
 	source addcontact-menu.sh
-elif [ "$CONTATCS" = "3" ]
-	then
+elif [ "$CONTACTS" = "3" ]
+then
 	source deletecontact.sh
-elif [ "$CONTATCS" = "4" ]
-	then
+elif [ "$CONTACTS" = "4" ]
+then
 	source mainmenu.sh
-elif [ "$CONTATCS" = "5" ]
-	then
-	rm $COOKIE
+elif [ "$CONTACTS" = "back" ]
+then
+	sleep 0.2
+	source mainmenu.sh
+elif [ "$CONTACTS" = "clear" ]
+then
+	sleep 0.2
+	clear
+	source contactsmenu.sh
+elif [ "$CONTACTS" = "exit" ]
+then
 	echo "Cleaning up.."
+	rm $COOKIE
+	sleep 0.2
 	exit
 else
-
-	echo "${red}There was an error${reset}" 1>&2
+	echo ${red}Invalid input:${yellow} $CONTACTS ${reset} 1>&2
 	source contactsmenu.sh
 fi

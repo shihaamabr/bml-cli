@@ -6,7 +6,6 @@ echo "3 - Contacts"
 echo "4 - Activities"
 echo "5 - Services"
 echo "6 - Settings"
-echo "7 - Exit"
 echo ""
 printf 'Please Input: '
 read -r MENU
@@ -44,12 +43,18 @@ elif [ "$MENU" = "6" ]
         sleep 2
        	source mainmenu.sh
 	source settingsmenu.sh
-elif [ "$MENU" = "7" ]
+elif [ "$MENU" = "clear" ]
 	then
+	clear
+	sleep 0.2
+	source mainmenu.sh
+elif [ "$MENU" = "exit" ]
+	then
+	echo "cleaning up..."
 	rm $COOKIE
+	sleep 0.2
 	exit
 else
-        echo "${red}There was an error${reset}" 1>&2
-
-	source mainmenu.sh
+	echo ${red}Invalid input:${yellow} $MENU ${reset} 1>&2
+        source mainmenu.sh
 fi
