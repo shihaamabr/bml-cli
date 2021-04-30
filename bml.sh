@@ -11,11 +11,13 @@ CREDENTIALS=~/.config/bml-cli/.env
 
 #Setting terminal output colors
 red=`tput setaf 1`
-green=`tput setaf 2`
+#errorred=`tput setaf 196`
+#validgreen=`tput setaf 82`
+green=`tput setaf 46`
 brown=`tput setaf 3`
 blue=`tput setaf 4`
 pink=`tput setaf 5`
-cyan=`tput setaf 6`
+cyan=`tput setaf 39`
 gray=`tput setaf 7`
 darkgray=`tput setaf 8`
 lightred=`tput setaf 9`
