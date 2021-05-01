@@ -14,7 +14,7 @@ then
 elif [ "$SETTINGS" = "2" ]
 then
 	source changepassword.sh
-elif [ "$SETTINGS" = "back" ]
+elif [ "$SETTINGS" = "2" ] || [ "$SETTINGS" = "back" ]
 then
 	source mainmenu.sh
 elif [ "$SETTINGS" = "clear" ]

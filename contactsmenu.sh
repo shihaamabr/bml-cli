@@ -18,10 +18,7 @@ then
 elif [ "$CONTACTS" = "3" ]
 then
 	source deletecontact.sh
-elif [ "$CONTACTS" = "4" ]
-then
-	source mainmenu.sh
-elif [ "$CONTACTS" = "back" ]
+elif [ "$CONTACTS" = "4" ] || [ "$CONTACTS" = "back" ]
 then
 	sleep 0.2
 	source mainmenu.sh

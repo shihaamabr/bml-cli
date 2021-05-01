@@ -11,12 +11,9 @@ echo ""
 printf 'Select contact type[1]: '
 read -r CONTACT_TYPE
 
-if [ "$CONTACT_TYPE" = "1" ]
+if [ "$CONTACT_TYPE" = "1" ] || [ "$CONTACT_TYPE" = "" ]
 	then
 	source addcontact-bml.sh
-elif [ "$CONTACT_TYPE" = "" ]
-	then
-	source addcontact-bml.sh 
 elif [ "$CONTATC_TYPE" = "2" ]
 	then
 	echo "${red}WORK IN PROGRESS${reset}"

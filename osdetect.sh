@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "uname -r | grep -oE microsoft" = "microsoft" ]
+if [ "uname -r | grep -oE microsoft" = "microsoft" ] || [ "uname -r | grep -oE Microsoft" = "Microsoft" ]
         then
 		WSL=true
                 #echo "${red}WSL Not Supported!${reset}" 1>&2
