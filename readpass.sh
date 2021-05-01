@@ -3,6 +3,7 @@ then
 	source $CREDENTIALS
 #	echo "Attempting to login with saved credentials"
 	read -s -p 'Enter Pin: ' PIN
+	echo ""
 	BML_USERNAME=$(echo ${BML_USERNAME} |openssl enc -d -des3 -base64 -pass pass:${PIN} -pbkdf2)
 	BML_PASSWORD=$(echo ${BML_PASSWORD} |openssl enc -d -des3 -base64 -pass pass:${PIN} -pbkdf2)
 	if [ "$LOGIN" = "2" ]
