@@ -14,7 +14,7 @@ then
 elif [ "$SETTINGS" = "2" ]
 then
 	source changepassword.sh
-elif [ "$SETTINGS" = "2" ] || [ "$SETTINGS" = "back" ]
+elif [ "$SETTINGS" = "3" ] || [ "$SETTINGS" = "back" ]
 then
 	source mainmenu.sh
 elif [ "$SETTINGS" = "clear" ]
@@ -30,5 +30,5 @@ then
 	exit
 else
 	echo ${red}Invalid input:${yellow} $SETTINGS ${reset} 1>&2
-	source SETTINGSmenu.sh
+	source settings-menu.sh
 fi
