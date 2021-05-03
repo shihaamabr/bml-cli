@@ -31,7 +31,7 @@ chmod +x bml.sh
 ./bml.sh
 ```
 ## Installation systemwide - BETA
-`curl -sSL https://install-bml-cli.shihaam.dev | bash`
+`curl -sSL https://install.bml-cli.shihaam.dev | bash`
 
 
 
