@@ -8,8 +8,8 @@ PHONE=$(curl -s -b $COOKIE $BML_URL/userinfo \
 EMAIL=$(curl -s -b $COOKIE $BML_URL/userinfo \
 	| jq -r '.["payload"] | .["user"] | .email')
 DOB=$(curl -s -b $COOKIE $BML_URL/userinfo \
-        | jq -r '.["payload"] | .["user"] | .birthdate')
-#	| cut -f1 -d 'T' )
+        | jq -r '.["payload"] | .["user"] | .birthdate' \
+	| cut -d 'T' -f 1)
 IDCARD=$(curl -s -b $COOKIE $BML_URL/userinfo \
         | jq -r '.["payload"] | .["user"] | .idcard')
 
