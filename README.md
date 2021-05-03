@@ -23,13 +23,17 @@ BML CLI written in Bash. This project is currently under development and a lot o
 ### OpenSUSE
 `sudo zypper install curl jq openssl`
 
-## Installation
+## Installation - git
 ```
 git clone https://github.com/shihaamabr/bml-cli
 cd bml-cli
 chmod +x bml.sh
 ./bml.sh
 ```
+## Installation systemwide - BETA
+`curl -sSL https://install-bml-cli.shihaam.dev | bash`
+
+
 
 ## Bugs
 - Throws error and exists on MacOS and WSL \
