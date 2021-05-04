@@ -1,17 +1,20 @@
 #Requesting for User profile after login and regex to grap the Full name
 curl -s -b $COOKIE $BML_URL/profile > /dev/null
 
-NAME=$(curl -s -b $COOKIE $BML_URL/userinfo \
-	| jq -r '.["payload"] | .["user"] | .fullname')
-PHONE=$(curl -s -b $COOKIE $BML_URL/userinfo \
-	| jq -r '.["payload"] | .["user"] | .mobile_phone')
-EMAIL=$(curl -s -b $COOKIE $BML_URL/userinfo \
-	| jq -r '.["payload"] | .["user"] | .email')
-DOB=$(curl -s -b $COOKIE $BML_URL/userinfo \
-        | jq -r '.["payload"] | .["user"] | .birthdate' \
-	| cut -d 'T' -f 1)
-IDCARD=$(curl -s -b $COOKIE $BML_URL/userinfo \
-        | jq -r '.["payload"] | .["user"] | .idcard')
+USERINFO=$(curl -s -b $COOKIE $BML_URL/userinfo \
+	| jq -r '.["payload"] | .["user"]')
+
+NAME=$(echo $USERINFO \
+        | jq -r .fullname)
+PHONE=$(echo $USERINFO \
+        | jq -r .mobile_phone)
+EMAIL=$(echo $USERINFO \
+        | jq -r .email)
+DOB=$(echo $USERINFO \
+        | jq -r .birthdate \
+        | cut -d 'T' -f 1)
+IDCARD=$(echo $USERINFO \
+        | jq -r .idcard)
 
 #display a Welcome message with fullname
 echo "${red}"
