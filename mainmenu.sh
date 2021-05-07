@@ -39,9 +39,6 @@ elif [ "$MENU" = "5" ]
 	source services.sh
 elif [ "$MENU" = "6" ]
 	then
-        echo "WIP"
-#	sleep 2
-#	source mainmenu.sh
 	source settings-menu.sh
 elif [ "$MENU" = "clear" ]
 	then
