@@ -55,7 +55,6 @@ else
 	:
 fi
 
-
 if [ "$OTPCHANNEL" = "mobile" ]
 	then
 	ECHOOTPCHANNEL=$PHONE
@@ -77,13 +76,15 @@ PASSCHANGED=$(curl -s -b $COOKIE $BML_URL/user/changepassword \
 		--compressed \
 		| jq -r .success)
 
+OLD_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
+NEW_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
+REPEAT_NEWPASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
+
 if [ "$PASSCHANGED" != "true" ]
 	then
 		echo "${red}Failed to change password${reset}"
 else
 	echo "${lightgreen}Password changed succesfully ${reset}"
-	OLD_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
-	NEW_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
-	REPEAT_NEWPASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
-	source settings-menu.sh
+	rm $CREDENTIALS
+	source readpass.sh
 fi
