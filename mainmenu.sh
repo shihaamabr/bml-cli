@@ -14,8 +14,8 @@ if [ "$MENU" = "1" ]
         then
 	echo "WIP"
 	sleep 2
-	source mainmenu.sh
-	#source accounts.sh 
+	#source mainmenu.sh
+	source accounts.sh 
 elif [ "$MENU" = "2" ]
         then
 	echo "WIP" 
