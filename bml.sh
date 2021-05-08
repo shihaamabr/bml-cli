@@ -10,8 +10,7 @@ BML_RESETPASS='https://www.bankofmaldives.com.mv/internetbanking/forgot_password
 COOKIE=~/.cache/bml-cli/cookie
 CREDENTIALS=~/.config/bml-cli/.env
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cd $DIR
+cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1
 
 #Setting terminal output colors
 red=`tput setaf 1`
