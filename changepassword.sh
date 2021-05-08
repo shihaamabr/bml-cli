@@ -82,5 +82,8 @@ if [ "$PASSCHANGED" != "true" ]
 		echo "${red}Failed to change password${reset}"
 else
 	echo "${lightgreen}Password changed succesfully ${reset}"
+	OLD_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
+	NEW_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
+	REPEAT_NEWPASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
 	source settings-menu.sh
 fi
