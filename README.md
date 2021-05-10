@@ -36,5 +36,4 @@ chmod +x bml.sh
 
 
 ## Bugs
-- Throws error and exists on MacOS and WSL \
-  Solution run: `rm osdetect.sh`
+- Password save does not work on LibreSSL 2.8.3, Homebrew installs this version on MacOS
