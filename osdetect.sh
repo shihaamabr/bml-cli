@@ -5,7 +5,7 @@ if [ "uname -r | grep -oE microsoft" = "microsoft" ]
 		OS=windows
                 #echo ${red}WSL Not Supported!${reset} 1>&2
                 #exit
-elif [ "uname -a | grep -oE Darwin | tail -n1" = "Darwin" ]
+elif [ $(uname -a | grep -oE Darwin | tail -n1) = "Darwin" ]
         then
 		OS=macos
 		export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
