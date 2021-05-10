@@ -15,13 +15,13 @@ elif [ "$LOGIN" = "20" ]
 		echo "${red}Account Locked!${reset}"
 		echo "${lightred}Please reset password and login again.${reset}"
 		echo ""
-		if [ "$MAC" = "true" ]
+		if [ "$OS" = "macos" ]
 		then
 			open $BML_RESETPASS
-		elif [ "$WSL" = "true" ]
+		elif [ "$OS" = "windows" ]
 		then
 			cmd.exe /C START $BML_RESETPASS
-		elif [ "$ANDROID" = "true" ]
+		elif [ "$OS" = "android" ]
 		then
 			am start -a android.intent.action.VIEW -d $BML_RESETPASS
 		else
