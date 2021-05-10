@@ -1,5 +1,11 @@
 #Requesting for User profile after login and regex to grap the Full name
-curl -s -b $COOKIE $BML_URL/profile > /dev/null
+REQPRO=$(curl -s -b $COOKIE $BML_URL/profile)
+PERSONALPROFILE=$(echo $REQPRO \
+	| jq -r '.payload | .profile | .[] | .profile' \
+	| head -n 1)
+curl -s -b $COOKIE $BML_URL/profile \
+	--data-raw profile=$PERSONALPROFILE \
+	--compressed > /dev/null
 
 USERINFO=$(curl -s -b $COOKIE $BML_URL/userinfo \
 	| jq -r '.["payload"] | .["user"]')
