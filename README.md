@@ -36,4 +36,4 @@ chmod +x bml.sh
 
 
 ## Bugs
-- Password save does not work on LibreSSL 2.8.3, Homebrew installs this version on MacOS
+- [You tell me :)](https://github.com/shihaamabr/bml-cli/issues/new)
