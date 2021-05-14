@@ -31,6 +31,11 @@ elif [ "$LOGIN" = "20" ]
 elif [ "$LOGIN" = "2" ]
 	then
 		source readpass.sh
+elif [ "$LOGIN" = "37" ]
+	then
+		echo "${red}Down for Maintenance${reset}" 1>&2
+		echo "Try again later"
+		exit
 else
 		echo "${red}Unknown Error${reset}" 1>&2
 		exit
