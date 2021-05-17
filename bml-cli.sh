@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1
 CONFIG=~/.config/bml-cli/config
@@ -44,7 +44,7 @@ initanimate(){
 	sleep 0.05
 	printf "\r${@} [${anim:$h:1}]"
 	done
-	initbanner
+	#initbanner
 }
 animate(){
 	PID=$!
@@ -107,7 +107,7 @@ os_detect(){
 }
 
 initbanner(){
-#	clear
+	clear
 	echo "${red}"
 	echo "██████╗░███╗░░░███╗██╗░░░░░  ░█████╗░██╗░░░░░██╗"
 	echo "██╔══██╗████╗░████║██║░░░░░  ██╔══██╗██║░░░░░██║"
@@ -119,7 +119,7 @@ initbanner(){
 }
 
 banner(){
-#	clear
+	clear
 	echo "${red}"
 	echo "██████╗░███╗░░░███╗██╗░░░░░  ░█████╗░██╗░░░░░██╗"
 	echo "██╔══██╗████╗░████║██║░░░░░  ██╔══██╗██║░░░░░██║"
@@ -140,10 +140,13 @@ banner(){
 readpin(){
 	read -s -p 'Enter Pin: ' PIN
 	echo ""
+#}
+#decrypt_pin(){
 	BML_USERNAME_UNSAFE=$(echo ${BML_USERNAME} | openssl enc -d -des3 -base64 -pass pass:${PIN} -pbkdf2)
 	BML_PASSWORD_UNSAFE=$(echo ${BML_PASSWORD} | openssl enc -d -des3 -base64 -pass pass:${PIN} -pbkdf2)
 	login
 }
+
 wipe_credentials(){
 	sed -i "s@BML_USERNAME=.*\$@BML_USERNAME='' # Your encrypted BML Username @" $CREDENTIALS
 	sed -i "s@BML_PASSWORD=.*\$@BML_PASSWORD='' # Your encrypted BML Password @" $CREDENTIALS
@@ -167,9 +170,12 @@ savepass(){
 			read -s -p 'Repeat Pin: ' REPEAT_PIN
 			if [ "$NEW_PIN" = "$REPEAT_PIN" ]
 			then
+				#encrypt & initanimate "Encrypting Credentials"
 				echo ""
 				BML_USERNAME=$(echo "${BML_USERNAME_UNSAFE}" | openssl enc -e -des3 -base64 -pass pass:${NEW_PIN} -pbkdf2)
 				BML_PASSWORD=$(echo "${BML_PASSWORD_UNSAFE}" | openssl enc -e -des3 -base64 -pass pass:${NEW_PIN} -pbkdf2)
+				encrypt_user & initanimate "Encrypting Username"
+				encrypt_pass & initanimate "Encrypting Password"
 				echo "Your credentials are ${lightgreen}encrypted${reset} and saved in $CREDENTIALS"
 				sed -i "s@BML_USERNAME=.*\$@BML_USERNAME='${BML_USERNAME}' # Your encrypted BML Username @" $CREDENTIALS
 				sed -i "s@BML_PASSWORD=.*\$@BML_PASSWORD='${BML_PASSWORD}' # Your encrypted BML Password @" $CREDENTIALS
@@ -184,9 +190,17 @@ savepass(){
 	else
 		:
 	fi
-	echo ok
-	#urandom & animate "${G}Randomzing Credentials${N}" && select_profile
+	#echo ok
+	urandom & animate "${G}Randomzing Credentials${N}" && select_profile
 }
+#encrypt(){
+#	sed -i "s@BML_USERNAME=.*\$@BML_USERNAME='${BML_USERNAME}' # Your encrypted BML Username @" $CREDENTIALS
+#	sed -i "s@BML_PASSWORD=.*\$@BML_PASSWORD='${BML_PASSWORD}' # Your encrypted BML Password @" $CREDENTIALS
+#	BML_USERNAME=$(echo "${BML_USERNAME_UNSAFE}" | openssl enc -e -des3 -base64 -pass pass:${NEW_PIN} -pbkdf2)
+#	BML_PASSWORD=$(echo "${BML_PASSWORD_UNSAFE}" | openssl enc -e -des3 -base64 -pass pass:${NEW_PIN} -pbkdf2)
+#	echo "Your credentials are ${lightgreen}encrypted${reset} and saved in $CREDENTIALS"
+#	savepass
+#}
 login(){
 	LOGIN=$(curl -s -c $COOKIE $BML_URL/login \
 	--data-raw username=$BML_USERNAME_UNSAFE \
@@ -383,8 +397,8 @@ then
 	initialize
 fi
 
-check_connection #& initanimate "Checking Internet Connection"
-os_detect # & initanimate "Detecting Operating System"
+check_connection & initanimate "Checking Internet Connection"
+os_detect & initanimate "Detecting Operating System"
 source $CONFIG
 source $CREDENTIALS
 if [ "$BML_USERNAME" != "" ]  && [ "$BML_PASSWORD" != "" ]
@@ -393,5 +407,5 @@ then
 else
 	enter_credentials
 fi
-#userinfo
-#banner && main_menu
+userinfo
+banner && main_menu
