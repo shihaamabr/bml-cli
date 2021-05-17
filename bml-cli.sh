@@ -71,11 +71,21 @@ initialize(){
 }
 
 check_connection(){
+	initbanner
 	PING=$(ping www.bankofmaldives.com.mv -c 2 2> /dev/null | grep -oE 0%)
-	if [ "$PING" != "0%" ] ; then
+	if [ "$PING" != "0%" ]
+	then
 		echo ${red}Check your connection and try again.${reset}
 		exit
 	fi
+	DOS=$(curl -s https://www.bankofmaldives.com.mv/ | grep -oE "error code: 1020")
+	if [ "$DOS" = "error code: 1020" ]
+	then
+		echo ${red}Access denied${reset}
+		echo Try again later
+		exit
+	fi
+	initbanner
 }
 
 os_detect(){
@@ -140,8 +150,12 @@ banner(){
 readpin(){
 	read -s -p 'Enter Pin: ' PIN
 	echo ""
-#}
-#decrypt_pin(){
+	CHECK_PIN=$(echo ${BML_USERNAME} | openssl enc -d -des3 -base64 -pass pass:${PIN} -pbkdf2  2>&1 | grep -oE bad)
+	if [ "$CHECK_PIN" = "bad bad"  ]
+	then
+		echo ${R}Incorrect Pin${N}
+		readpin
+	fi
 	BML_USERNAME_UNSAFE=$(echo ${BML_USERNAME} | openssl enc -d -des3 -base64 -pass pass:${PIN} -pbkdf2)
 	BML_PASSWORD_UNSAFE=$(echo ${BML_PASSWORD} | openssl enc -d -des3 -base64 -pass pass:${PIN} -pbkdf2)
 	login
@@ -346,13 +360,13 @@ settings(){
 
 	if [ "$SETTINGS" = "1" ]
 	then
-		logout
+		banner && bml-cli_settings
 	elif [ "$SETTINGS" = "2" ]
 	then
 		source changepassword.sh
 	elif [ "$SETTINGS" = "3" ] || [ "$SETTINGS" = "back" ]
 	then
-		source mainmenu.sh
+		banner && main_menu
 	elif [ "$SETTINGS" = "clear" ]
 	then
 		sleep 0.2
@@ -375,21 +389,21 @@ bml-cli_settings(){
 	echo ""
 	echo "1 - Logout"
 	echo "2 - Logout and reset configration"
-	echo "3 - Exit"
+	echo "3 - Back"
 	echo ""
 	printf 'Please Input: '
-	read -r BML-CLI_SETTINGS
-	if [ "$BML-CLI_SETTINGS" = "1" ]
+	read -r BML_CLI_SETTINGS
+	if [ "$BML_CLI_SETTINGS" = "1" ]
 	then
 		logout
 		echo "Exit.."
 		exit
-	elif [ "$BML-CLI_SETTINGS" = "2" ]
+	elif [ "$BML_CLI_SETTINGS" = "2" ]
 	then
 		reset_config && exit
-	elif [ "$BML-CLI_SETTINGS" = "3" ]
+	elif [ "$BML_CLI_SETTINGS" = "3" ]
 	then
-		exit
+		banner && settings
 	fi
 }
 if [ ! -f $CONFIG ]
@@ -397,8 +411,8 @@ then
 	initialize
 fi
 
-check_connection & initanimate "Checking Internet Connection"
-os_detect & initanimate "Detecting Operating System"
+check_connection  & initanimate "Checking Internet Connection"
+os_detect #& initanimate "Detecting Operating System"
 source $CONFIG
 source $CREDENTIALS
 if [ "$BML_USERNAME" != "" ]  && [ "$BML_PASSWORD" != "" ]
