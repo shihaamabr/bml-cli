@@ -35,17 +35,6 @@ N='\e[0m'          # How to use (example): echo "${G}example${N}"
 loadBar=' '        # Load UI
 
 ##Setting Up Funcations
-initanimate(){
-	PID=$!
-	h=0
-	anim='⠋⠙⠴⠦'
-	while [ -d /proc/$PID ]; do
-	h=$(((h + 1) % 4))
-	sleep 0.05
-	printf "\r${@} [${anim:$h:1}]"
-	done
-	#initbanner
-}
 animate(){
 	PID=$!
 	h=0
@@ -55,7 +44,6 @@ animate(){
 		sleep 0.05
 	printf "\r${@} [${anim:$h:1}]"
 	done
-        banner
 }
 initialize(){
 	mkdir -p ~/.config/bml-cli/
@@ -71,7 +59,6 @@ initialize(){
 }
 
 check_connection(){
-	initbanner
 	PING=$(ping www.bankofmaldives.com.mv -c 2 2> /dev/null | grep -oE 0%)
 	if [ "$PING" != "0%" ]
 	then
@@ -85,7 +72,6 @@ check_connection(){
 		echo Try again later
 		exit
 	fi
-	initbanner
 }
 
 os_detect(){
@@ -114,20 +100,9 @@ os_detect(){
 	then
 		 OS=android
 	fi
+	banner
 }
-
-initbanner(){
-	clear
-	echo "${red}"
-	echo "██████╗░███╗░░░███╗██╗░░░░░  ░█████╗░██╗░░░░░██╗"
-	echo "██╔══██╗████╗░████║██║░░░░░  ██╔══██╗██║░░░░░██║"
-	echo "██████╦╝██╔████╔██║██║░░░░░  ██║░░╚═╝██║░░░░░██║"
-	echo "██╔══██╗██║╚██╔╝██║██║░░░░░  ██║░░██╗██║░░░░░██║"
-	echo "██████╦╝██║░╚═╝░██║███████╗  ╚█████╔╝███████╗██║"
-	echo "╚═════╝░╚═╝░░░░░╚═╝╚══════╝  ░╚════╝░╚══════╝╚═╝"
-	echo "${reset}"
-}
-
+##################################################################
 banner(){
 	clear
 	echo "${red}"
@@ -138,15 +113,20 @@ banner(){
 	echo "██████╦╝██║░╚═╝░██║███████╗  ╚█████╔╝███████╗██║"
 	echo "╚═════╝░╚═╝░░░░░╚═╝╚══════╝  ░╚════╝░╚══════╝╚═╝"
 	echo "${reset}"
+}
+display_welcome(){
+	echo ""
 	echo ${green}Welcome ${reset}$NAME
 	echo ""
+}
+display_user_info(){
 	echo ${cyan}Phone${reset}: $PHONE
 	echo ${cyan}Email${reset}: $EMAIL
 	echo ${cyan}Birthday${reset}: $DOB
 	echo ${cyan}ID Card${reset}: $IDCARD
 	echo ""
 }
-
+####################################################################
 readpin(){
 	read -s -p 'Enter Pin: ' PIN
 	echo ""
@@ -156,6 +136,7 @@ readpin(){
 		echo ${R}Incorrect Pin${N}
 		readpin
 	fi
+	banner
 	BML_USERNAME_UNSAFE=$(echo ${BML_USERNAME} | openssl enc -d -des3 -base64 -pass pass:${PIN} -pbkdf2)
 	BML_PASSWORD_UNSAFE=$(echo ${BML_PASSWORD} | openssl enc -d -des3 -base64 -pass pass:${PIN} -pbkdf2)
 	login
@@ -184,12 +165,11 @@ savepass(){
 			read -s -p 'Repeat Pin: ' REPEAT_PIN
 			if [ "$NEW_PIN" = "$REPEAT_PIN" ]
 			then
-				#encrypt & initanimate "Encrypting Credentials"
 				echo ""
 				BML_USERNAME=$(echo "${BML_USERNAME_UNSAFE}" | openssl enc -e -des3 -base64 -pass pass:${NEW_PIN} -pbkdf2)
 				BML_PASSWORD=$(echo "${BML_PASSWORD_UNSAFE}" | openssl enc -e -des3 -base64 -pass pass:${NEW_PIN} -pbkdf2)
-				encrypt_user & initanimate "Encrypting Username"
-				encrypt_pass & initanimate "Encrypting Password"
+				#encrypt_user #& initanimate "Encrypting Username"
+				#encrypt_pass #& initanimate "Encrypting Password"
 				echo "Your credentials are ${lightgreen}encrypted${reset} and saved in $CREDENTIALS"
 				sed -i "s@BML_USERNAME=.*\$@BML_USERNAME='${BML_USERNAME}' # Your encrypted BML Username @" $CREDENTIALS
 				sed -i "s@BML_PASSWORD=.*\$@BML_PASSWORD='${BML_PASSWORD}' # Your encrypted BML Password @" $CREDENTIALS
@@ -204,17 +184,11 @@ savepass(){
 	else
 		:
 	fi
-	#echo ok
-	urandom & animate "${G}Randomzing Credentials${N}" && select_profile
+	urandom && select_profile
 }
-#encrypt(){
-#	sed -i "s@BML_USERNAME=.*\$@BML_USERNAME='${BML_USERNAME}' # Your encrypted BML Username @" $CREDENTIALS
-#	sed -i "s@BML_PASSWORD=.*\$@BML_PASSWORD='${BML_PASSWORD}' # Your encrypted BML Password @" $CREDENTIALS
-#	BML_USERNAME=$(echo "${BML_USERNAME_UNSAFE}" | openssl enc -e -des3 -base64 -pass pass:${NEW_PIN} -pbkdf2)
-#	BML_PASSWORD=$(echo "${BML_PASSWORD_UNSAFE}" | openssl enc -e -des3 -base64 -pass pass:${NEW_PIN} -pbkdf2)
-#	echo "Your credentials are ${lightgreen}encrypted${reset} and saved in $CREDENTIALS"
-#	savepass
-#}
+################################################################################################
+
+################################################################################################
 login(){
 	LOGIN=$(curl -s -c $COOKIE $BML_URL/login \
 	--data-raw username=$BML_USERNAME_UNSAFE \
@@ -222,14 +196,15 @@ login(){
 		| jq -r .code)
 	if [ "$LOGIN" = "0" ]
         then
-		echo Login success
+		echo ${lightgreen}Login success${reset}
 		savepass
 	elif [ "$LOGIN" = "20" ]
 	then
 		account_locked
 	elif [ "$LOGIN" = "2" ]
 	then
-		echo Password or Username Incorrect
+		banner
+		echo ${red}Password or Username Incorrect${reset}
 		wipe_credentials
 		enter_credentials
 	elif [ "$LOGIN" = "37" ]
@@ -242,6 +217,9 @@ login(){
 		exit
 	fi
 }
+################################################################################################
+
+################################################################################################
 account_locked(){
 	echo "${red}Account Locked!${reset}"
 	echo "${lightred}Please reset password and login again.${reset}"
@@ -260,7 +238,9 @@ account_locked(){
 	fi
 	enter_credentials
 }
+################################################################################################
 
+################################################################################################
 enter_credentials(){
 	#echo ""
 	read -p 'Username: ' BML_USERNAME_UNSAFE
@@ -268,7 +248,9 @@ enter_credentials(){
 	echo ""
 	login
 }
+################################################################################################
 
+################################################################################################
 select_profile(){
 REQPRO=$(curl -s -b $COOKIE $BML_URL/profile)
 PERSONALPROFILE=$(echo $REQPRO \
@@ -278,7 +260,9 @@ curl -s -b $COOKIE $BML_URL/profile \
 	--data-raw profile=$PERSONALPROFILE \
 	--compressed > /dev/null
 }
+################################################################################################
 
+################################################################################################
 userinfo(){
 USERINFO=$(curl -s -b $COOKIE $BML_URL/userinfo | jq -r '.["payload"] | .["user"]')
 NAME=$(echo $USERINFO | jq -r .fullname)
@@ -287,6 +271,106 @@ EMAIL=$(echo $USERINFO | jq -r .email)
 DOB=$(echo $USERINFO | jq -r .birthdate |cut -d 'T' -f 1)
 IDCARD=$(echo $USERINFO | jq -r .idcard)
 }
+################################################################################################
+
+################################################################################################
+accounts(){
+	banner
+	curl -s -b $COOKIE $BML_URL/dashboard \
+		| jq -r '.payload | .dashboard |.[] | (.alias, .account, .currency, .availableBalance)'
+}
+################################################################################################
+
+################################################################################################
+list_contacts(){
+	echo $API_CONATCTS | jq -r '["ID","Account Number","Currency","Account Name","Contact Name"], ["==================================================================="], (.["payload"] | .[] | [.id, .account, .currency, .name, .alias]) | @tsv'
+}
+################################################################################################
+api_contacts(){
+	API_CONATCTS=$(curl -s -b $COOKIE $BML_URL/contacts)
+}
+
+################################################################################################
+transfer(){
+#	banner
+	accounts
+	echo ""
+	echo "Select debit account"
+	echo "Enter credit account"
+}
+################################################################################################
+
+################################################################################################
+api_account(){
+API_ACCOUNT=$(curl -s -b $COOKIE $BML_URL/validate/account/$ACCOUNT_NUMBER)
+}
+################################################################################################
+
+################################################################################################
+add_contact(){
+printf 'Account Number: '
+read -r ACCOUNT_NUMBER
+api_account
+VALID_NUMBER=$(echo $API_ACCOUNT | jq -r .success)
+
+if [ "$VALID_NUMBER" = "true" ]
+then
+
+	ACCOUNT_NAME=$(echo $API_ACCOUNT | jq -r '.["payload"] | .name')
+	CURRENCY=$(echo $API_ACCOUNT | jq -r '.["payload"] | .currency')
+	echo "Account Name: $ACCOUNT_NAME"
+	echo "Currency: $CURRENCY"
+	echo ""
+	printf 'Contact Name: '
+	read -r CONTACT_NAME
+		if [ "$CONTACT_NAME" = "" ]
+		then
+			CONTACT_NAME=$ACCOUNT_NAME
+		else
+			:
+		fi
+	CONTACT_NAME=`echo "$CONTACT_NAME" | sed "s/ /%20/"`
+	ADDCONTACT=$(curl -s -b $COOKIE $BML_URL/contacts \
+		--data-raw contact_type=IAT \
+		--data-raw account=$ACCOUNT_NUMBER \
+		--data-raw alias=$CONTACT_NAME \
+		--compressed \
+		| jq -r .success)
+
+		if [ "$ADDCONTACT" = "true" ]
+		then
+			echo "Contact added successfully"
+		else
+			echo "${red}There was an error${reset}"
+		fi
+else
+	echo "${red}Invalid Account${reset}" 1>&2
+	add_contact
+fi
+}
+################################################################################################
+
+################################################################################################
+delete_contact(){
+	printf "Enter Contact ID: "
+	read -r CONATACT_ID
+	DELETESUCCESS=$(curl -s -b $COOKIE $BML_URL/contacts/$CONATACT_ID \
+		--data-raw _method=delete \
+		--compressed \
+		| jq -r .code)
+
+	if [ "$DELETESUCCESS" = "0" ]
+	then
+		echo Contact Deleted
+		contacts_menu
+	else
+		echo "${red}There was an error${reset}"
+		delete_contact
+	fi
+}
+################################################################################################
+
+################################################################################################
 main_menu(){
 echo "Main Menu"
 echo ""
@@ -302,19 +386,17 @@ read -r MENU
 
 if [ "$MENU" = "1" ]
         then
-	echo "WIP"
-	sleep 2
-	#source mainmenu.sh
-	source accounts.sh
+	banner
+	accounts #& animate "Fetching account details"
+#	display_user_info
+	accounts_menu
 elif [ "$MENU" = "2" ]
         then
-	echo "WIP"
-        sleep 2
-        source mainmenu.sh
-	#source transfer.sh
-elif [ "$MENU" = "3" ]
+	banner
+	transfer_menu
+elif [ "$MENU" = "3" ] || [ "$MENU" = "contacts" ]
         then
-	source contactsmenu.sh
+	banner && api_contacts &&  list_contacts &&  contacts_menu
 elif [ "$MENU" = "4" ]
         then
 	echo "WIP"
@@ -342,13 +424,69 @@ elif [ "$MENU" = "exit" ]
 	sleep 0.2
 	exit
 else
+	banner
 	echo ${red}Invalid input:${yellow} $MENU ${reset} 1>&2
-        source mainmenu.sh
+        main_menu
 fi
 }
-
-settings(){
+##############################################################################################
+accounts_menu(){
+	echo "Work In Progress"
+	read -p "Press Anykey to go main menu" BRUH
+	banner && display_welcome && display_user_info && main_menu
+}
+################################################################################################
+contacts_menu(){
+	echo "Contacts"
 	echo ""
+	echo "1 - Transfer"
+	echo "2 - Add New Contact"
+	echo "3 - Delete Contact"
+	echo "x - Go back"
+	echo ""
+	printf 'Please Input: '
+read -r CONTACTS
+
+if [ "$CONTACTS" = "1" ]
+then
+	banner
+	transfer_menu
+elif [ "$CONTACTS" = "2" ]
+then
+	banner
+	add_contact
+	contacts_menu
+elif [ "$CONTACTS" = "3" ]
+then
+	banner
+	list_contacts
+	delete_contact
+	api_contacts
+	contact_menu
+elif [ "$CONTACTS" = "x" ] || [ "$CONTACTS" = "back" ]
+then
+	sleep 0.2
+	banner
+	main_menu
+elif [ "$CONTACTS" = "exit" ]
+then
+	echo "Cleaning up.."
+	rm $COOKIE
+	sleep 0.2
+	exit
+else
+	echo ${red}Invalid input:${yellow} $CONTACTS ${reset} 1>&2
+	source contactsmenu.sh
+fi
+}
+transfer_menu(){
+	echo "Work In Progress"
+	read -p "Press Anykey to go main menu" BRUH
+	banner && display_user_info && main_menu
+}
+
+################################################################################################
+settings(){
 	echo "Settings"
 	echo ""
 	echo "1 - bml-cli Settings"
@@ -364,27 +502,17 @@ settings(){
 	elif [ "$SETTINGS" = "2" ]
 	then
 		source changepassword.sh
-	elif [ "$SETTINGS" = "3" ] || [ "$SETTINGS" = "back" ]
+	elif [ "$SETTINGS" = "x" ] || [ "$SETTINGS" = "back" ]
 	then
 		banner && main_menu
-	elif [ "$SETTINGS" = "clear" ]
-	then
-		sleep 0.2
-		clear
-		source settings-menu.sh
-	elif [ "$SETTINGS" = "exit" ]
-	then
-		echo "Cleaning up.."
-		rm $COOKIE
-		sleep 0.2
-		exit
 	else
+		banner
+		display_user_info
 		echo ${red}Invalid input:${yellow} $SETTINGS ${reset} 1>&2
-		source settings-menu.sh
+		settings
 	fi
 }
 bml-cli_settings(){
-	echo ""
 	echo "bml-cli Settings"
 	echo ""
 	echo "1 - Logout"
@@ -411,8 +539,8 @@ then
 	initialize
 fi
 
-check_connection  & initanimate "Checking Internet Connection"
-os_detect #& initanimate "Detecting Operating System"
+banner && check_connection #& animate "Checking Internet Connection"
+banner && os_detect #& animate "Detecting Operating System"
 source $CONFIG
 source $CREDENTIALS
 if [ "$BML_USERNAME" != "" ]  && [ "$BML_PASSWORD" != "" ]
@@ -422,4 +550,4 @@ else
 	enter_credentials
 fi
 userinfo
-banner && main_menu
+banner && display_welcome && display_user_info && main_menu
