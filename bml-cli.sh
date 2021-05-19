@@ -42,7 +42,7 @@ animate(){
 	while [ -d /proc/$PID ]; do
 		h=$(((h + 1) % 4))
 		sleep 0.05
-	printf "\r${@} [${anim:$h:1}]"
+		printf "\r${@} [${anim:$h:1}]"
 	done
 }
 initialize(){
@@ -63,7 +63,7 @@ check_connection(){
 	if [ "$PING" != "0%" ]
 	then
 		echo ${red}Check your connection and try again.${reset}
-		exit
+		exit 1
 	fi
 	DOS=$(curl -s https://www.bankofmaldives.com.mv/ | grep -oE "error code: 1020")
 	if [ "$DOS" = "error code: 1020" ]
@@ -85,7 +85,7 @@ os_detect(){
 		if [ "$I_AM_SODU" != "true" ]
 		then
 			echo ${red}Please check $CONFIG and configure accordingly.${reset}
-			exit
+			cexit
 		fi
 	elif [ "$MAC" = "Darwin" ]
 	then
@@ -94,7 +94,7 @@ os_detect(){
 		if [ "$I_AM_HYPOCRITE" != "true" ]
 		then
 			echo ${red}Please check $CONFIG and configure accordingly.${reset}
-			exit
+			cexit
 		fi
 	elif [ "$ANDROID" = "Android" ]
 	then
@@ -103,7 +103,7 @@ os_detect(){
 	banner
 }
 ##################################################################
-banner(){
+display_banner(){
 	clear
 	echo "${red}"
 	echo "██████╗░███╗░░░███╗██╗░░░░░  ░█████╗░██╗░░░░░██╗"
@@ -115,11 +115,14 @@ banner(){
 	echo "${reset}"
 }
 display_welcome(){
-	echo ""
 	echo ${green}Welcome ${reset}$NAME
 	echo ""
 }
-display_user_info(){
+display_name(){
+	echo ""
+	echo ${cyan}Name${reset}: $NAME
+}
+display_userinfo(){
 	echo ${cyan}Phone${reset}: $PHONE
 	echo ${cyan}Email${reset}: $EMAIL
 	echo ${cyan}Birthday${reset}: $DOB
@@ -127,6 +130,13 @@ display_user_info(){
 	echo ""
 }
 ####################################################################
+cexit(){
+	echo "Cleaning up.."
+	rm $COOKIE
+	sleep 0.2
+	exit
+}
+
 readpin(){
 	read -s -p 'Enter Pin: ' PIN
 	echo ""
@@ -136,10 +146,11 @@ readpin(){
 		echo ${R}Incorrect Pin${N}
 		readpin
 	fi
-	banner
+	#banner
 	BML_USERNAME_UNSAFE=$(echo ${BML_USERNAME} | openssl enc -d -des3 -base64 -pass pass:${PIN} -pbkdf2)
 	BML_PASSWORD_UNSAFE=$(echo ${BML_PASSWORD} | openssl enc -d -des3 -base64 -pass pass:${PIN} -pbkdf2)
-	login
+	#banner
+	login #& animate "Logging in"
 }
 
 wipe_credentials(){
@@ -184,7 +195,8 @@ savepass(){
 	else
 		:
 	fi
-	select_profile #	urandom && select_profile
+	urandom
+	select_profile #& animate "Selecting Profile" #	urandom && select_profile
 }
 ################################################################################################
 
@@ -196,20 +208,21 @@ login(){
 		| jq -r .code)
 	if [ "$LOGIN" = "0" ]
         then
+		display_banner
 		echo ${lightgreen}Login success${reset}
 		savepass
 	elif [ "$LOGIN" = "20" ]
 	then
-		banner
+		display_banner
 		account_locked
 		sleep 1.5
-		banner
+		display_banner
 		echo "${red}Account Locked!${reset}"
 		echo "${lightred}Please reset password and login again.${reset}"
 		enter_credentials
 	elif [ "$LOGIN" = "2" ]
 	then
-		banner
+		display_banner
 		echo ${red}Password or Username Incorrect${reset}
 		wipe_credentials
 		enter_credentials
@@ -270,9 +283,9 @@ userinfo(){
 	SUCCESS=$(echo $USERINFO | jq -r .success)
 	if [ "$SUCCESS" != "true" ]
 	then
-		echo "Login Required"
+		echo ${red}Login Required${reset}
 		init_login
-		banner
+		display_banner
 		userinfo
 	fi
 	USERINFO=$(echo $USERINFO | jq -r '.["payload"] | .["user"]')
@@ -286,35 +299,35 @@ userinfo(){
 
 ################################################################################################
 accounts(){
-	echo $API_DASHBOARD \
-		| jq -r '.payload | .dashboard |.[] | (.alias, .account, .currency, .availableBalance)'
+	echo $DASHBOARD | jq -r '.payload | .dashboard |.[] | (.alias, .account, .currency, .availableBalance)'
 }
 ################################################################################################
 api_dashboard(){
-	API_DASHBOARD=$(curl -s -b $COOKIE $BML_URL/dashboard)
-	SUCCESS=$(echo $API_DASHBOARD | jq -r .success)
+	DASHBOARD=$(curl -s -b $COOKIE $BML_URL/dashboard)
+	SUCCESS=$(echo $DASHBOARD | jq -r .success)
 	if [ "$SUCCESS" != "true" ]
 	then
-		echo "Login Required"
+		echo ${red}Login Required${reset}
 		init_login
-		banner
+		display_banner && display_name && display_userinfo
 		api_dashboard
 	fi
 }
 
 ################################################################################################
 list_contacts(){
-	echo $API_CONATACTS | jq -r '["ID","Account Number","Currency","Account Name","Contact Name"], ["==================================================================="], (.["payload"] | .[] | [.id, .account, .currency, .name, .alias]) | @tsv'
+	echo $API_CONATACTS | jq -r '["ID","Account Number","Currency","Account Name","Contact Name"], ["​​===========","==============","========","=============================","============================="], (.["payload"] | .[] | [.id, .account, .currency, .name, .alias]) | @tsv' \
+	| perl -pe 's/((?<=\t)|(?<=^))\t/ \t/g;' "$@" | column -t -s $'\t' | exec less  -F -S -X -K
 }
 ################################################################################################
 api_contacts(){
 	API_CONATACTS=$(curl -s -b $COOKIE $BML_URL/contacts)
-	SUCCESS=$(echo $API_CONATACTS | jq -r .success)
-	if [ "$SUCCESS" != "true" ]
+	SUCCESS=$(echo $API_CONATACTS | jq -r .code)
+	if [ "$SUCCESS" = "17" ]
 	then
-		echo "Login Required"
+		echo ${red}Login Required${reset}
 		init_login
-		banner
+		display_banner && display_name && display_userinfo
 		api_contacts
 	fi
 }
@@ -331,14 +344,34 @@ transfer(){
 
 ################################################################################################
 api_account(){
-API_ACCOUNT=$(curl -s -b $COOKIE $BML_URL/validate/account/$ACCOUNT_NUMBER)
+	API_ACCOUNT=$(curl -s -b $COOKIE $BML_URL/validate/account/$ACCOUNT_NUMBER)
+	SUCCESS=$(echo $API_ACCOUNT | jq -r .code)
+	if [ "$SUCCESS" = "17" ]
+	then
+		echo ${red}Login Required${reset}
+		init_login
+		display_banner && display_name && display_userinfo
+	fi
 }
 ################################################################################################
 
 ################################################################################################
 add_contact(){
-printf 'Account Number: '
-read -r ACCOUNT_NUMBER
+	printf 'Account Number: '
+	read -r ACCOUNT_NUMBER
+
+	if [ "$ACCOUNT_NUMBER" = "x" ] || [ "$ACCOUNT_NUMBER" = "back" ]
+	then
+		display_banner && display_name && display_userinfo
+		contacts_menu
+	elif [ "$ACCOUNT_NUMBER" = "" ]
+	then
+		display_banner && display_name && display_userinfo
+		echo ${red}No input${reset}
+		echo Input account number or ${lightgreen}x${reset} to go back
+		add_contact
+	fi
+
 api_account
 VALID_NUMBER=$(echo $API_ACCOUNT | jq -r .success)
 
@@ -355,21 +388,26 @@ then
 		if [ "$CONTACT_NAME" = "" ]
 		then
 			CONTACT_NAME=$ACCOUNT_NAME
-		else
-			:
 		fi
-	CONTACT_NAME=`echo "$CONTACT_NAME" | sed "s/ /%20/"`
+	CONTACT_NAME_SED=`echo "$CONTACT_NAME" | sed "s/ /%20/g"`
 	ADDCONTACT=$(curl -s -b $COOKIE $BML_URL/contacts \
 		--data-raw contact_type=IAT \
 		--data-raw account=$ACCOUNT_NUMBER \
-		--data-raw alias=$CONTACT_NAME \
+		--data-raw alias=$CONTACT_NAME_SED \
 		--compressed \
-		| jq -r .success)
+		| jq -r .code)
 
-		if [ "$ADDCONTACT" = "true" ]
+		if [ "$ADDCONTACT" = "0" ]
 		then
-			echo "Contact added successfully"
+			display_banner && display_name && display_userinfo
+			echo $ACCOUNT_NUMBER ${lightgreen}saved as ${reset} $CONTACT_NAME ${lightgreen}succesfully${reset}
+		elif [ "$ADDCONTACT" = "17" ]
+		then
+			echo ${red}Login Required ${reset}
+			init_login
+			add_contact
 		else
+			display_banner && display_name && display_userinfo
 			echo "${red}There was an error${reset}"
 		fi
 else
@@ -415,46 +453,42 @@ read -r MENU
 
 if [ "$MENU" = "1" ]
         then
-	banner
-	api_dashboard
-	accounts #& animate "Fetching account details"
-#	display_user_info
+	display_banner
+	api_dashboard # & animate "Fetching account details"
+	display_banner
+	accounts
 	accounts_menu
 elif [ "$MENU" = "2" ]
         then
-	banner
+	display_banner && display_name && display_userinfo
 	transfer_menu
 elif [ "$MENU" = "3" ] || [ "$MENU" = "contacts" ]
         then
-	banner && api_contacts &&  list_contacts &&  contacts_menu
+	display_banner && display_name && display_userinfo
+	api_contacts #& animate "Fetching contacts"
+	#display_banner
+	list_contacts
+	contacts_menu
 elif [ "$MENU" = "4" ]
         then
 	echo "WIP"
         sleep 2
         source mainmenu.sh
 	source activities.sh
-elif [ "$MENU" = "5" ]
+	elif [ "$MENU" = "5" ]
         then
-        echo "WIP"
-        sleep 2
-        source mainmenu.sh
-	source services.sh
-elif [ "$MENU" = "6" ]
+        	echo "WIP"
+	        sleep 2
+		cexit
+	elif [ "$MENU" = "6" ]
 	then
-	banner && settings
-elif [ "$MENU" = "clear" ]
+		display_banner && display_name && display_userinfo
+		settings
+	elif [ "$MENU" = "exit" ]
 	then
-	clear
-	sleep 0.2
-	source mainmenu.sh
-elif [ "$MENU" = "exit" ]
-	then
-	echo "cleaning up..."
-	rm $COOKIE
-	sleep 0.2
-	exit
-else
-	banner
+		cexit
+	else
+	display_banner && display_name && display_userinfo
 	echo ${red}Invalid input:${yellow} $MENU ${reset} 1>&2
         main_menu
 fi
@@ -463,7 +497,8 @@ fi
 accounts_menu(){
 	echo "Work In Progress"
 	read -p "Press Anykey to go main menu" BRUH
-	banner && display_welcome && display_user_info && main_menu
+	display_banner && display_name && display_userinfo
+	main_menu
 }
 ################################################################################################
 contacts_menu(){
@@ -477,91 +512,89 @@ contacts_menu(){
 	printf 'Please Input: '
 read -r CONTACTS
 
-if [ "$CONTACTS" = "1" ]
+if [ "$CONTACTS" = "1" ] || ["$CONTACTS" = "transfer" ]
 then
-	banner
+	display_banner && display_name && display_userinfo
 	transfer_menu
-elif [ "$CONTACTS" = "2" ]
+elif [ "$CONTACTS" = "2" ] || ["$CONTACTS" = "add new contact" ]
 then
-	banner
+	display_banner && display_name && display_userinfo
 	add_contact
 	contacts_menu
-elif [ "$CONTACTS" = "3" ]
+elif [ "$CONTACTS" = "3" ] || ["$CONTACTS" = "delete contact" ]
 then
-	banner
+	display_banner && display_name && display_userinfo
 	list_contacts
 	delete_contact
 	api_contacts
 	contact_menu
 elif [ "$CONTACTS" = "x" ] || [ "$CONTACTS" = "back" ]
 then
-	sleep 0.2
-	banner
+	display_banner && display_name && display_userinfo
 	main_menu
 elif [ "$CONTACTS" = "exit" ]
 then
-	echo "Cleaning up.."
-	rm $COOKIE
-	sleep 0.2
-	exit
+	cexit
 else
+	display_banner && display_name && display_userinfo
 	echo ${red}Invalid input:${yellow} $CONTACTS ${reset} 1>&2
-	source contactsmenu.sh
+	contacts_menu
 fi
 }
 transfer_menu(){
 	echo "Work In Progress"
 	read -p "Press Anykey to go main menu" BRUH
-	banner && display_user_info && main_menu
+	display_banner && display_name && display_userinfo
+	main_menu
 }
 
 ################################################################################################
 settings(){
 	echo "Settings"
-	echo ""
 	echo "1 - bml-cli Settings"
 	echo "2 - BML Account Settings"
-	echo "3 - Go Back"
+	echo "x - Go Back"
 	echo ""
 	printf 'Please Input: '
 	read -r SETTINGS
 
 	if [ "$SETTINGS" = "1" ]
 	then
-		banner && bml-cli_settings
+		display_banner && display_name && display_userinfo
+		bml-cli_settings
 	elif [ "$SETTINGS" = "2" ]
 	then
 		source changepassword.sh
 	elif [ "$SETTINGS" = "x" ] || [ "$SETTINGS" = "back" ]
 	then
-		banner && main_menu
+		display_banner && display_name && display_userinfo
+		main_menu
 	else
-		banner
-		display_user_info
+		display_banner && display_name && display_userinfo
 		echo ${red}Invalid input:${yellow} $SETTINGS ${reset} 1>&2
 		settings
 	fi
 }
 bml-cli_settings(){
 	echo "bml-cli Settings"
-	echo ""
 	echo "1 - Logout"
 	echo "2 - Logout and reset configration"
-	echo "3 - Back"
+	echo "x - Back"
 	echo ""
 	printf 'Please Input: '
 	read -r BML_CLI_SETTINGS
 	if [ "$BML_CLI_SETTINGS" = "1" ]
 	then
 		logout
-		echo "Exit.."
-		exit
+		cexit
 	elif [ "$BML_CLI_SETTINGS" = "2" ]
 	then
-		reset_config && exit
-	elif [ "$BML_CLI_SETTINGS" = "3" ]
+		reset_config
+		cexit
+	elif [ "$BML_CLI_SETTINGS" = "x" ] || [ "$BML_CLI_SETTINGS" = "back" ]
 	then
-		banner && settings
+		display_banner && display_name && display_userinfo
+		settings
 	fi
 }
 if [ ! -f $CONFIG ]
@@ -577,10 +610,10 @@ init_login(){
 		enter_credentials
 	fi
 }
-banner && check_connection & animate "Checking Internet Connection"
-banner && os_detect & animate "Detecting Operating System"
+display_banner && check_connection #& animate "Checking Internet Connection"
+display_banner && os_detect # & animate "Detecting Operating System"
 source $CONFIG
 source $CREDENTIALS
-banner && init_login
+display_banner && init_login
 userinfo
-banner && display_welcome && display_user_info && main_menu
+display_banner && display_welcome && display_userinfo && main_menu
