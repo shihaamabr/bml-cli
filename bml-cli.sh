@@ -264,22 +264,41 @@ curl -s -b $COOKIE $BML_URL/profile \
 
 ################################################################################################
 userinfo(){
-USERINFO=$(curl -s -b $COOKIE $BML_URL/userinfo | jq -r '.["payload"] | .["user"]')
-NAME=$(echo $USERINFO | jq -r .fullname)
-PHONE=$(echo $USERINFO | jq -r .mobile_phone)
-EMAIL=$(echo $USERINFO | jq -r .email)
-DOB=$(echo $USERINFO | jq -r .birthdate |cut -d 'T' -f 1)
-IDCARD=$(echo $USERINFO | jq -r .idcard)
+	USERINFO=$(curl -s -b $COOKIE $BML_URL/userinfo)
+	SUCCESS=$(echo $USERINFO | jq -r .success)
+	if [ "$SUCCESS" != "true" ]
+	then
+		echo "Login Required"
+		init_login
+		banner
+		userinfo
+	fi
+	USERINFO=$(echo $USERINFO | jq -r '.["payload"] | .["user"]')
+	NAME=$(echo $USERINFO | jq -r .fullname)
+	PHONE=$(echo $USERINFO | jq -r .mobile_phone)
+	EMAIL=$(echo $USERINFO | jq -r .email)
+	DOB=$(echo $USERINFO | jq -r .birthdate |cut -d 'T' -f 1)
+	IDCARD=$(echo $USERINFO | jq -r .idcard)
 }
 ################################################################################################
 
 ################################################################################################
 accounts(){
-	banner
 	curl -s -b $COOKIE $BML_URL/dashboard \
 		| jq -r '.payload | .dashboard |.[] | (.alias, .account, .currency, .availableBalance)'
 }
 ################################################################################################
+api_dashboard(){
+	API_DASHBOARD=$(curl -s -b $COOKIE $BML_URL/dashboard)
+	SUCCESS=$(echo $API_CONATACTS | jq -r .success)
+	if [ "$SUCCESS" != "true"
+	then
+		echo "Login Required"
+		init_login
+		banner
+		api_dashboard
+	fi
+}
 
 ################################################################################################
 list_contacts(){
@@ -293,6 +312,7 @@ api_contacts(){
 	then
 		echo "Login Required"
 		init_login
+		banner
 		api_contacts
 	fi
 }
@@ -394,6 +414,7 @@ read -r MENU
 if [ "$MENU" = "1" ]
         then
 	banner
+	api_dashboard
 	accounts #& animate "Fetching account details"
 #	display_user_info
 	accounts_menu
