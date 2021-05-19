@@ -152,7 +152,7 @@ urandom(){
 	BML_USERNAME=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
 	BML_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
 	REPEAT_PIN=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
-	PIN=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
+	NEW_PIN=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5)
 }
 savepass(){
 	if [ "$BML_USERNAME" = "" ]  && [ "$BML_PASSWORD" = "" ]
@@ -184,7 +184,7 @@ savepass(){
 	else
 		:
 	fi
-	urandom && select_profile
+	select_profile #	urandom && select_profile
 }
 ################################################################################################
 
@@ -283,11 +283,18 @@ accounts(){
 
 ################################################################################################
 list_contacts(){
-	echo $API_CONATCTS | jq -r '["ID","Account Number","Currency","Account Name","Contact Name"], ["==================================================================="], (.["payload"] | .[] | [.id, .account, .currency, .name, .alias]) | @tsv'
+	echo $API_CONATACTS | jq -r '["ID","Account Number","Currency","Account Name","Contact Name"], ["==================================================================="], (.["payload"] | .[] | [.id, .account, .currency, .name, .alias]) | @tsv'
 }
 ################################################################################################
 api_contacts(){
-	API_CONATCTS=$(curl -s -b $COOKIE $BML_URL/contacts)
+	API_CONATACTS=$(curl -s -b $COOKIE $BML_URL/contacts)
+	SUCCESS=$(echo $API_CONATACTS | jq -r .success)
+	if [ "$SUCCESS" != "true" ]
+	then
+		echo "Login Required"
+		init_login
+		api_contacts
+	fi
 }
 
 ################################################################################################
@@ -539,15 +546,18 @@ then
 	initialize
 fi
 
-banner && check_connection #& animate "Checking Internet Connection"
-banner && os_detect #& animate "Detecting Operating System"
+init_login(){
+	if [ "$BML_USERNAME" != "" ]  && [ "$BML_PASSWORD" != "" ]
+	then
+		readpin
+	else
+		enter_credentials
+	fi
+}
+banner && check_connection & animate "Checking Internet Connection"
+banner && os_detect & animate "Detecting Operating System"
 source $CONFIG
 source $CREDENTIALS
-if [ "$BML_USERNAME" != "" ]  && [ "$BML_PASSWORD" != "" ]
-then
-	readpin
-else
-	enter_credentials
-fi
+banner && init_login
 userinfo
 banner && display_welcome && display_user_info && main_menu
