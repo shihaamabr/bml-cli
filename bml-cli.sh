@@ -200,7 +200,13 @@ login(){
 		savepass
 	elif [ "$LOGIN" = "20" ]
 	then
+		banner
 		account_locked
+		sleep 1.5
+		banner
+		echo "${red}Account Locked!${reset}"
+		echo "${lightred}Please reset password and login again.${reset}"
+		enter_credentials
 	elif [ "$LOGIN" = "2" ]
 	then
 		banner
@@ -221,9 +227,6 @@ login(){
 
 ################################################################################################
 account_locked(){
-	echo "${red}Account Locked!${reset}"
-	echo "${lightred}Please reset password and login again.${reset}"
-	echo ""
 	if [ "$OS" = "macos" ]
 	then
 		open $BML_RESETPASS
@@ -236,7 +239,6 @@ account_locked(){
 	else
 		xdg-open $BML_RESETPASS
 	fi
-	enter_credentials
 }
 ################################################################################################
 
@@ -284,14 +286,14 @@ userinfo(){
 
 ################################################################################################
 accounts(){
-	curl -s -b $COOKIE $BML_URL/dashboard \
+	echo $API_DASHBOARD \
 		| jq -r '.payload | .dashboard |.[] | (.alias, .account, .currency, .availableBalance)'
 }
 ################################################################################################
 api_dashboard(){
 	API_DASHBOARD=$(curl -s -b $COOKIE $BML_URL/dashboard)
-	SUCCESS=$(echo $API_CONATACTS | jq -r .success)
-	if [ "$SUCCESS" != "true"
+	SUCCESS=$(echo $API_DASHBOARD | jq -r .success)
+	if [ "$SUCCESS" != "true" ]
 	then
 		echo "Login Required"
 		init_login
