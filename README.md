@@ -6,7 +6,7 @@ This project is currently under development and a lot of things are broken.
 
 ## Getting Started
 ### Requirements
-`curl` `jq` `openssl`
+`curl` `jq` `openssl` `perl`
 - Termux users will need `ncurses-utils` additionally for terminal colors
 - Install with whatever package manager you use.
 - Make SURE all requirements are met before running script.
