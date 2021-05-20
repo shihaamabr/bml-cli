@@ -758,9 +758,9 @@ init_login(){
 	fi
 }
 display_banner && check_connection #& animate "Checking Internet Connection"
-display_banner && os_detect # & animate "Detecting Operating System"
 source $CONFIG
 source $CREDENTIALS
+display_banner && os_detect # & animate "Detecting Operating System"
 display_banner && init_login
 userinfo
 display_banner && display_welcome && display_userinfo && main_menu
