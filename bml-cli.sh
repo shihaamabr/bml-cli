@@ -34,7 +34,7 @@ BGBL='\e[1;30;47m' # Background W Text Bl
 N='\e[0m'          # How to use (example): echo "${G}example${N}"
 loadBar=' '        # Load UI
 
-##Setting Up Funcations
+##Setting Up Functions
 animate(){
 	PID=$!
 	h=0
