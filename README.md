@@ -24,4 +24,5 @@ curl -sSL https://install.bml-cli.shihaam.dev | sudo bash
 ```
 
 ## Bugs
+- Throw unknown error when wrong pin entered
 - [You tell me :)](https://github.com/shihaamabr/bml-cli/issues/new)
