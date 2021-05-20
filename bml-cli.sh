@@ -60,7 +60,7 @@ initialize(){
 }
 
 check_connection(){
-	PING=$(ping www.bankofmaldives.com.mv -c 2 2> /dev/null | grep -oE 0%)
+	PING=$(ping -c 1 www.bankofmaldives.com.mv 2> /dev/null | grep -oE 0%)
 	if [ "$PING" != "0%" ]
 	then
 		echo ${red}Check your connection and try again.${reset}
