@@ -470,8 +470,8 @@ api_activites(){
 ################################################################################################
 activities(){
 	echo Current Page: 1
-	echo $API_ACTIVITES | jq -r '["Type","Date","Contact","Amount","Remarks","Status"], ["=====","=========","============","=======","==================","==========="],(.payload | .content | .data | .[] | [.type, .datetime, .creditName, .formattedAmount, .message, .status]) | @tsv' \
-	| perl -pe 's/((?<=\t)|(?<=^))\t/ \t/g;' "$@" | column -t -s $'\t' | exec less  -F -S -X -K
+	echo $API_ACTIVITES | jq -r '["Type","Date","Time","Contact","Amount","Remarks","Status"], ["=====","==========","=====","============","=======","==================","==========="],(.payload | .content | .data | .[] | [.type, .datetime, .creditName, .formattedAmount, .message, .status]) | @tsv' \
+	| sed "s/+05:00//g" | sed "s/[0-9]T[0-9]/	/g" | perl -pe 's/((?<=\t)|(?<=^))\t/ \t/g;' "$@" | column -t -s $'\t' | exec less  -F -S -X -K
 	while true; do
 	echo ""
 	echo Total Pages: $PAGETOTAL
@@ -482,13 +482,13 @@ activities(){
 		display_banner && display_name && display_userinfo
 		echo Current Page: $PAGENO
 		curl -s -b $COOKIE $BML_URL/activities?page=$PAGENO \
-		| jq -r '["Type","Date","Contact","Amount","Remarks","Status"], ["=====","=========","============","=======","==================","==========="],(.payload | .content | .data | .[] | [.type, .datetime, .creditName, .formattedAmount, .message, .status]) | @tsv' \
-		| perl -pe 's/((?<=\t)|(?<=^))\t/ \t/g;' "$@" | column -t -s $'\t' | exec less  -F -S -X -K
+		| jq -r '["Type","Date","Time","Contact","Amount","Remarks","Status"], ["=====","==========","=====","============","=======","==================","==========="],(.payload | .content | .data | .[] | [.type, .datetime, .creditName, .formattedAmount, .message, .status]) | @tsv' \
+		| sed "s/+05:00//g" | sed "s/[0-9]T[0-9]/       /g" | perl -pe 's/((?<=\t)|(?<=^))\t/ \t/g;' "$@" | column -t -s $'\t' | exec less  -F -S -X -K
 	elif [ "$PAGENO" -gt "$PAGETOTAL" ]
 	then
 		display_banner && display_name && display_userinfo
 		echo ${red}value too high${reset}
-	elif [ "$PAGENO" = "x" ]
+	elif [ "$PAGENO" = "x" ] || [ "$PAGENO" = "0" ] || [ "$PAGENO" = "back" ]
 	then
 		display_banner && display_name && display_userinfo
 		main_menu
