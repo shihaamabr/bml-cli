@@ -476,12 +476,8 @@ activities(){
 	echo ""
 	echo Total Pages: $PAGETOTAL
 	read -p "Enter Page Number: " PAGENO
-	if [ "$PAGENO" = "" ]
-	then
-		display_banner && display_name && display_userinfo
-		echo ${red}Invalid Input${reset}
-		echo Enter x to go back
-	elif [ "$PAGENO" -le "$PAGETOTAL" ]
+
+	if [ "$PAGENO" -le "$PAGETOTAL" ]
 	then
 		display_banner && display_name && display_userinfo
 		echo Current Page: $PAGENO
@@ -496,6 +492,10 @@ activities(){
 	then
 		display_banner && display_name && display_userinfo
 		main_menu
+	else
+		display_banner && display_name && display_userinfo
+		echo ${red}Invalid Input${reset}
+		echo Enter x to go back
 	fi
 	done
 }
