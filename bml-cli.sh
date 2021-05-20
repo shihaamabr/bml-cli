@@ -46,6 +46,7 @@ animate(){
 	done
 }
 initialize(){
+	echo initalizing..
 	mkdir -p ~/.config/bml-cli/
 	mkdir -p ~/.cache/bml-cli/
 	echo "# DO NOT EDIT THIS MANUALLY!!" > $CREDENTIALS
@@ -132,16 +133,31 @@ display_userinfo(){
 ####################################################################
 cexit(){
 	echo "Cleaning up.."
-	rm $COOKIE
+	rm $COOKIE 2> /dev/null
 	sleep 0.2
 	exit
 }
 
+reset_config(){
+	read -p 'Are you sure: [y/N]' SURE
+	if [ "$SURE" = "y" ] || [ "$SURE" = "Y" ]
+	then
+		display_banner
+		sleep 0.5
+		echo Deleting Configration.... & rm -rf ~/.config/bml-cli
+		sleep 0.5
+		echo Deleting Credentials.... & rm -rf ~/.cache/bml-cli
+		cexit
+	else
+		display_banner && display_name && display_userinfo
+		settings
+	fi
+}
 readpin(){
 	read -s -p 'Enter Pin: ' PIN
 	echo ""
 	CHECK_PIN=$(echo ${BML_USERNAME} | openssl enc -d -des3 -base64 -pass pass:${PIN} -pbkdf2  2>&1 | grep -oE bad)
-	if [ "$CHECK_PIN" = "bad bad"  ]
+	if [ "$CHECK_PIN" = "bad bad" ]
 	then
 		echo ${R}Incorrect Pin${N}
 		readpin
@@ -299,7 +315,9 @@ userinfo(){
 
 ################################################################################################
 accounts(){
-	echo $DASHBOARD | jq -r '.payload | .dashboard |.[] | (.alias, .account, .currency, .availableBalance)'
+	echo $DASHBOARD \
+	| jq -r '["Account Name"," Account Number","Type", "Currency", "Balance"], ["===================","==============","==================","=========","========="], (.payload | .dashboard |.[] | [.alias, .account, .product, .currency, .availableBalance]) | @tsv' \
+	| perl -pe 's/((?<=\t)|(?<=^))\t/ \t/g;' "$@" | column -t -s $'\t' | exec less  -F -S -X -K
 }
 ################################################################################################
 api_dashboard(){
@@ -481,6 +499,13 @@ activities(){
 	fi
 	done
 }
+services(){
+	echo ""
+        echo "Work In Progress"
+        read -p "Press enter to return to main menu" BRUH
+        display_banner && display_name && display_userinfo
+        main_menu
+}
 ################################################################################################
 main_menu(){
 echo "Main Menu"
@@ -497,9 +522,8 @@ read -r MENU
 
 	if [ "$MENU" = "1" ]
         then
-		display_banner
 		api_dashboard # & animate "Fetching account details"
-		display_banner
+		display_banner && display_name && display_userinfo
 		accounts
 		accounts_menu
 	elif [ "$MENU" = "2" ]
@@ -519,14 +543,13 @@ read -r MENU
 		activities
 	elif [ "$MENU" = "5" ]
         then
-        	echo "WIP"
-	        sleep 2
-		cexit
+		display_banner && display_name && display_userinfo
+		services
 	elif [ "$MENU" = "6" ]
 	then
 		display_banner && display_name && display_userinfo
 		settings
-	elif [ "$MENU" = "exit" ]
+	elif [ "$MENU" = "exit" ] || [ "$MENU" = "x" ]
 	then
 		cexit
 	else
@@ -537,8 +560,9 @@ fi
 }
 ##############################################################################################
 accounts_menu(){
+	echo ""
 	echo "Work In Progress"
-	read -p "Press Anykey to go main menu" BRUH
+	read -p "Press enter to return main menu" BRUH
 	display_banner && display_name && display_userinfo
 	main_menu
 }
@@ -585,7 +609,7 @@ fi
 }
 transfer_menu(){
 	echo "Work In Progress"
-	read -p "Press Anykey to go main menu" BRUH
+	read -p "Press enter to return to main menu" BRUH
 	display_banner && display_name && display_userinfo
 	main_menu
 }
@@ -608,9 +632,14 @@ change_password(){
 		OTPCHANNEL=email
 		ECHOOTPCHANNEL=$EMAIL
 		break
+	elif [ "$OTPCHANNEL" = "back" ] || [ "$OTPCHANNEL" = "x" ]
+	then
+		display_banner && display_name && display_userinfo
+		settings
 	else
 		display_banner && display_name && display_userinfo
 		echo ${red}Invalid Input${reset}
+		echo Enter x to back
 	fi
 	done
 
