@@ -547,24 +547,118 @@ transfer_menu(){
 	display_banner && display_name && display_userinfo
 	main_menu
 }
+###########################################################################################
+change_password(){
+	read -s -p 'Enter Current Password: ' OLD_PASSWORD
+	echo ""
+	echo ""
+	while true; do
+		read -s -p 'Enter New Password: ' NEW_PASSWORD
+		echo ""
+		read -s -p 'Repeat New Password: ' REPEAT_NEWPASSWORD
+		echo ""
+		if [ "$NEW_PASSWORD" = "$REPEAT_NEWPASSWORD" ]
+		then
+			sleep 0.2
+			echo ""
+			break
+		else
+			echo "${red}Password do not match${reset}"
+			echo "Try again"
+			echo ""
+		fi
+		done
+
+	while true; do
+	echo "Select OTP Method:"
+	echo "1 - Mobile"
+	echo "2 - Email"
+	echo ""
+	read -p "Please input: " OTPCHANNEL
+
+	if [ "$OTPCHANNEL" = "1" ] || [ "$OTPCHANNEL" = "mobile" ]
+	then
+		OTPCHANNEL=mobile
+		break
+	elif [ "$OTPCHANNEL" = "2" ] || [ "$OTPCHANNEL" = "email" ]
+	then
+		OTPCHANNEL=email
+		break
+	else
+		echo ${red}Invalid Input${reset}
+		echo ""
+	fi
+	done
+
+	OLDPASSCHECHECK=$(curl -s -b $COOKIE $BML_URL/user/changepassword \
+			--data-raw currentPassword=$OLD_PASSWORD \
+			--data-raw newPassword=$NEW_PASSWORD \
+			--data-raw newPasswordConfirmation=$REPEAT_NEWPASSWORD \
+			--data-raw channel=$OTPCHANNEL \
+			--compressed \
+			| jq -r .code)
+
+	if [ "$OLDPASSCHECHECK" = "17" ]
+	then
+		echo ${red}Login Required${reset}
+		init_login
+		display_banner && display_name && display_userinfo
+		change_password
+	fi
+
+	if [ "$OTPCHANNEL" = "mobile" ]
+	then
+		ECHOOTPCHANNEL=$PHONE
+	elif [ "$OTPCHANNEL" = "email" ]
+	then
+		ECHOOTPCHANNEL=$EMAIL
+	fi
+
+	echo ""
+	echo ${lightgreen}OTP sent to ${yellow}${ECHOOTPCHANNEL}${reset}
+	read -p 'Enter OTP: ' OTP
+	echo ""
+	PASSCHANGED=$(curl -s -b $COOKIE $BML_URL/user/changepassword \
+		--data-raw currentPassword=$OLD_PASSWORD \
+		--data-raw newPassword=$NEW_PASSWORD \
+		--data-raw newPasswordConfirmation=$REPEAT_NEWPASSWORD \
+		--data-raw channel=$OTPCHANNEL \
+		--data-raw otp=$OTP \
+		--compressed \
+		| jq -r .code)
+
+	if [ "$PASSCHANGED" = "0" ]
+	then
+		echo "${red}Failed to change password${reset}"
+	else
+		echo "${lightgreen}Password changed succesfully ${reset}"
+	fi
+}
+##############################################################################################
+
 
 ################################################################################################
 settings(){
 	echo "Settings"
-	echo "1 - bml-cli Settings"
-	echo "2 - BML Account Settings"
-	echo "x - Go Back"
+	echo "1 - Logout"
+	echo "2 - Logout and reset config"
+	echo "3 - Change Password"
 	echo ""
 	printf 'Please Input: '
 	read -r SETTINGS
 
 	if [ "$SETTINGS" = "1" ]
 	then
-		display_banner && display_name && display_userinfo
-		bml-cli_settings
+		display_banner
+		logout
 	elif [ "$SETTINGS" = "2" ]
 	then
-		source changepassword.sh
+		display_banner
+		reset_config
+	elif [ "$SETTINGS" = "3" ]
+	then
+		display_banner && display_name && display_userinfo
+		change_password
 	elif [ "$SETTINGS" = "x" ] || [ "$SETTINGS" = "back" ]
 	then
 		display_banner && display_name && display_userinfo
@@ -575,28 +669,8 @@ settings(){
 		settings
 	fi
 }
-bml-cli_settings(){
-	echo "bml-cli Settings"
-	echo "1 - Logout"
-	echo "2 - Logout and reset configration"
-	echo "x - Back"
-	echo ""
-	printf 'Please Input: '
-	read -r BML_CLI_SETTINGS
-	if [ "$BML_CLI_SETTINGS" = "1" ]
-	then
-		logout
-		cexit
-	elif [ "$BML_CLI_SETTINGS" = "2" ]
-	then
-		reset_config
-		cexit
-	elif [ "$BML_CLI_SETTINGS" = "x" ] || [ "$BML_CLI_SETTINGS" = "back" ]
-	then
-		display_banner && display_name && display_userinfo
-		settings
-	fi
-}
+
+
 if [ ! -f $CONFIG ]
 then
 	initialize
