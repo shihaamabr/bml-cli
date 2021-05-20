@@ -436,7 +436,10 @@ delete_contact(){
 	fi
 }
 ################################################################################################
+activities(){
+curl -s -b $COOKIE $BML_URL/activities?page=1 | jq 
 
+}
 ################################################################################################
 main_menu(){
 echo "Main Menu"
@@ -451,30 +454,27 @@ echo ""
 printf 'Please Input: '
 read -r MENU
 
-if [ "$MENU" = "1" ]
+	if [ "$MENU" = "1" ]
         then
-	display_banner
-	api_dashboard # & animate "Fetching account details"
-	display_banner
-	accounts
-	accounts_menu
-elif [ "$MENU" = "2" ]
+		display_banner
+		api_dashboard # & animate "Fetching account details"
+		display_banner
+		accounts
+		accounts_menu
+	elif [ "$MENU" = "2" ]
         then
-	display_banner && display_name && display_userinfo
-	transfer_menu
-elif [ "$MENU" = "3" ] || [ "$MENU" = "contacts" ]
+		display_banner && display_name && display_userinfo
+		transfer_menu
+	elif [ "$MENU" = "3" ] || [ "$MENU" = "contacts" ]
         then
-	display_banner && display_name && display_userinfo
-	api_contacts #& animate "Fetching contacts"
-	#display_banner
-	list_contacts
-	contacts_menu
-elif [ "$MENU" = "4" ]
+		display_banner && display_name && display_userinfo
+		api_contacts #& animate "Fetching contacts"
+		list_contacts
+		contacts_menu
+	elif [ "$MENU" = "4" ]
         then
-	echo "WIP"
-        sleep 2
-        source mainmenu.sh
-	source activities.sh
+		display_banner && display_name && display_userinfo
+		activities
 	elif [ "$MENU" = "5" ]
         then
         	echo "WIP"
@@ -549,26 +549,6 @@ transfer_menu(){
 }
 ###########################################################################################
 change_password(){
-	read -s -p 'Enter Current Password: ' OLD_PASSWORD
-	echo ""
-	echo ""
-	while true; do
-		read -s -p 'Enter New Password: ' NEW_PASSWORD
-		echo ""
-		read -s -p 'Repeat New Password: ' REPEAT_NEWPASSWORD
-		echo ""
-		if [ "$NEW_PASSWORD" = "$REPEAT_NEWPASSWORD" ]
-		then
-			sleep 0.2
-			echo ""
-			break
-		else
-			echo "${red}Password do not match${reset}"
-			echo "Try again"
-			echo ""
-		fi
-		done
-
 	while true; do
 	echo "Select OTP Method:"
 	echo "1 - Mobile"
@@ -579,60 +559,81 @@ change_password(){
 	if [ "$OTPCHANNEL" = "1" ] || [ "$OTPCHANNEL" = "mobile" ]
 	then
 		OTPCHANNEL=mobile
+		ECHOOTPCHANNEL=$PHONE
 		break
 	elif [ "$OTPCHANNEL" = "2" ] || [ "$OTPCHANNEL" = "email" ]
 	then
 		OTPCHANNEL=email
+		ECHOOTPCHANNEL=$EMAIL
 		break
 	else
+		display_banner && display_name && display_userinfo
 		echo ${red}Invalid Input${reset}
-		echo ""
 	fi
 	done
 
-	OLDPASSCHECHECK=$(curl -s -b $COOKIE $BML_URL/user/changepassword \
-			--data-raw currentPassword=$OLD_PASSWORD \
-			--data-raw newPassword=$NEW_PASSWORD \
-			--data-raw newPasswordConfirmation=$REPEAT_NEWPASSWORD \
-			--data-raw channel=$OTPCHANNEL \
-			--compressed \
-			| jq -r .code)
-
-	if [ "$OLDPASSCHECHECK" = "17" ]
-	then
-		echo ${red}Login Required${reset}
-		init_login
-		display_banner && display_name && display_userinfo
-		change_password
-	fi
-
-	if [ "$OTPCHANNEL" = "mobile" ]
-	then
-		ECHOOTPCHANNEL=$PHONE
-	elif [ "$OTPCHANNEL" = "email" ]
-	then
-		ECHOOTPCHANNEL=$EMAIL
-	fi
+	read -s -p 'Enter Current Password: ' OLD_PASSWORD
 
 	echo ""
+	while true; do
+		read -s -p 'Enter New Password: ' NEW_PASSWORD
+		echo ""
+		read -s -p 'Repeat New Password: ' REPEAT_NEWPASSWORD
+		echo ""
+		if [ "$NEW_PASSWORD" != "$REPEAT_NEWPASSWORD" ]
+		then
+			display_banner && display_name && display_userinfo
+			echo "${red}Password do not match${reset}"
+			echo "Try again"
+		else
+			break
+		fi
+	done
+
+
+	curl -s -b $COOKIE $BML_URL/user/changepassword \
+		--data-raw currentPassword=$OLD_PASSWORD \
+		--data-raw newPassword=$NEW_PASSWORD \
+		--data-raw newPasswordConfirmation=$REPEAT_NEWPASSWORD \
+		--data-raw channel=$OTPCHANNEL > /dev/null
+
 	echo ${lightgreen}OTP sent to ${yellow}${ECHOOTPCHANNEL}${reset}
 	read -p 'Enter OTP: ' OTP
-	echo ""
-	PASSCHANGED=$(curl -s -b $COOKIE $BML_URL/user/changepassword \
+	CHANGEPASSWORD=$(curl -s -b $COOKIE $BML_URL/user/changepassword \
 		--data-raw currentPassword=$OLD_PASSWORD \
 		--data-raw newPassword=$NEW_PASSWORD \
 		--data-raw newPasswordConfirmation=$REPEAT_NEWPASSWORD \
 		--data-raw channel=$OTPCHANNEL \
 		--data-raw otp=$OTP \
-		--compressed \
 		| jq -r .code)
 
-	if [ "$PASSCHANGED" = "0" ]
+	if [ "$CHANGEPASSWORD" = "0" ]
 	then
-		echo "${red}Failed to change password${reset}"
+		echo Password changed succesfully ${reset}
+	elif [ "$CHANGEPASSWORD" = "8" ]
+	then
+		display_banner && display_name && display_userinfo
+		echo ${red}Old Password is incorrect${reset}
+		echo failed to change password
+		change_password
+	elif [ "$CHANGEPASSWORD" = "24" ]
+	then
+		display_banner && display_name && display_userinfo
+		echo ${red}Invalid OTP${reset}
+		echo failed to change password
+		change_password
+	elif [ "$CHANGEPASSWORD" = "17" ]
+	then
+		echo ${red}Login Required${reset}
+		init_login
+		display_banner
+		change_password
 	else
-		echo "${lightgreen}Password changed succesfully ${reset}"
+		echo unknown error
+		main_menu
 	fi
+
+
 }
 ##############################################################################################
 
@@ -650,7 +651,8 @@ settings(){
 	if [ "$SETTINGS" = "1" ]
 	then
 		display_banner
-		logout
+		wipe_credentials
+		cexit
 	elif [ "$SETTINGS" = "2" ]
 	then
 		display_banner
