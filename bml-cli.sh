@@ -435,10 +435,51 @@ delete_contact(){
 		delete_contact
 	fi
 }
+#################################
+api_activites(){
+	API_ACTIVITES=$(curl -s -b $COOKIE $BML_URL/activities)
+	SUCCESS=$(echo $API_ACTIVITES | jq -r .code)
+	if [ "$SUCCESS" = "17" ]
+	then
+		echo ${red}Login Required${reset}
+		init_login
+		display_banner && display_name && display_userinfo
+		api_activites
+	fi
+	PAGETOTAL=$(echo $API_ACTIVITES | jq -r '.payload | .content | .last_page')
+
+}
 ################################################################################################
 activities(){
-curl -s -b $COOKIE $BML_URL/activities?page=1 | jq 
-
+	echo Current Page: 1
+	echo $API_ACTIVITES | jq -r '["Type","Date","Contact","Amount","Remarks","Status"], ["=====","=========","============","=======","==================","==========="],(.payload | .content | .data | .[] | [.type, .datetime, .creditName, .formattedAmount, .message, .status]) | @tsv' \
+	| perl -pe 's/((?<=\t)|(?<=^))\t/ \t/g;' "$@" | column -t -s $'\t' | exec less  -F -S -X -K
+	while true; do
+	echo ""
+	echo Total Pages: $PAGETOTAL
+	read -p "Enter Page Number: " PAGENO
+	if [ "$PAGENO" = "" ]
+	then
+		display_banner && display_name && display_userinfo
+		echo ${red}Invalid Input${reset}
+		echo Enter x to go back
+	elif [ "$PAGENO" -le "$PAGETOTAL" ]
+	then
+		display_banner && display_name && display_userinfo
+		echo Current Page: $PAGENO
+		curl -s -b $COOKIE $BML_URL/activities?page=$PAGENO \
+		| jq -r '["Type","Date","Contact","Amount","Remarks","Status"], ["=====","=========","============","=======","==================","==========="],(.payload | .content | .data | .[] | [.type, .datetime, .creditName, .formattedAmount, .message, .status]) | @tsv' \
+		| perl -pe 's/((?<=\t)|(?<=^))\t/ \t/g;' "$@" | column -t -s $'\t' | exec less  -F -S -X -K
+	elif [ "$PAGENO" -gt "$PAGETOTAL" ]
+	then
+		display_banner && display_name && display_userinfo
+		echo ${red}value too high${reset}
+	elif [ "$PAGENO" = "x" ]
+	then
+		display_banner && display_name && display_userinfo
+		main_menu
+	fi
+	done
 }
 ################################################################################################
 main_menu(){
@@ -474,6 +515,7 @@ read -r MENU
 	elif [ "$MENU" = "4" ]
         then
 		display_banner && display_name && display_userinfo
+		api_activites
 		activities
 	elif [ "$MENU" = "5" ]
         then
