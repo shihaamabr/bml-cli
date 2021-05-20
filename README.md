@@ -15,8 +15,8 @@ This project is currently under development and a lot of things are broken.
 ```
 git clone https://github.com/shihaamabr/bml-cli
 cd bml-cli
-chmod +x bml.sh
-./bml.sh
+chmod +x bml-cli.sh
+./bml-cli.sh
 ```
 #### Installation - Systemwide (NOT Recommended, May not work on some distros)
 ```
