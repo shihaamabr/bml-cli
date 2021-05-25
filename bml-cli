@@ -154,7 +154,7 @@ reset_config(){
 	fi
 }
 readpin(){
-	read -s -p 'Enter Pin: ' PIN
+	read -n 4 -s -p 'Enter Pin: ' PIN
 	echo ""
 	CHECK_PIN=$(echo ${BML_USERNAME} | openssl enc -d -des3 -base64 -pass pass:${PIN} -pbkdf2  2>&1 | grep -oE bad)
 	if [ "$CHECK_PIN" = "bad bad" ]
@@ -187,9 +187,9 @@ savepass(){
 		read -p 'Do you want to save login? [y/N] ' SAVE_LOGIN
 		if [ "$SAVE_LOGIN" = "Y" ] || [ "$SAVE_LOGIN" = "y" ]
 		then
-			read -s -p 'Enter New Pin: ' NEW_PIN
+			read -n 4 -s -p 'Enter New Pin: ' NEW_PIN
 			echo ""
-			read -s -p 'Repeat Pin: ' REPEAT_PIN
+			read -n 4 -s -p 'Repeat Pin: ' REPEAT_PIN
 			if [ "$NEW_PIN" = "$REPEAT_PIN" ]
 			then
 				echo ""
@@ -766,7 +766,7 @@ init_login(){
 display_banner && check_connection #& animate "Checking Internet Connection"
 source $CONFIG
 source $CREDENTIALS
-display_banner && os_detect # & animate "Detecting Operating System"
+display_banner && os_detect  #& animate "Detecting Operating System"
 display_banner && init_login
 userinfo
 display_banner && display_welcome && display_userinfo && main_menu
