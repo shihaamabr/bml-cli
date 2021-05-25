@@ -508,7 +508,7 @@ activities(){
 services(){
 	echo ""
         echo "Work In Progress"
-        read -p "Press enter to return to main menu" BRUH
+        read -n 1 -s -r -p "Press any key to continue"
         display_banner && display_name && display_userinfo
         main_menu
 }
@@ -568,7 +568,7 @@ fi
 accounts_menu(){
 	echo ""
 	echo "Work In Progress"
-	read -p "Press enter to return main menu" BRUH
+	read -n 1 -s -r -p "Press any key to continue"
 	display_banner && display_name && display_userinfo
 	main_menu
 }
@@ -615,7 +615,7 @@ fi
 }
 transfer_menu(){
 	echo "Work In Progress"
-	read -p "Press enter to return to main menu" BRUH
+	read -n 1 -s -r -p "Press any key to continue"
 	display_banner && display_name && display_userinfo
 	main_menu
 }
