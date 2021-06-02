@@ -424,6 +424,9 @@ then
 			echo ${red}Login Required ${reset}
 			init_login
 			add_contact
+		elif [ "$ADDCONTACT" = "11" ]
+		then
+			echo You already have this contact saved as $CONATCT_NAME
 		else
 			display_banner && display_name && display_userinfo
 			echo "${red}There was an error${reset}"
